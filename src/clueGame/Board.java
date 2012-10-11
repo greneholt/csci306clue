@@ -13,7 +13,7 @@ public class Board {
 			
 		}
 		
-		public int calcIndex() {
+		public int calcIndex(int row, int col) {
 			int test = 0;
 			return test;
 		}
