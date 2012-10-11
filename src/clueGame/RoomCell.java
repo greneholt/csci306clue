@@ -2,10 +2,10 @@ package clueGame;
 
 public class RoomCell extends BoardCell {
 
-		enum DoorDirection { UP, DOWN, LEFT, RIGHT, NONE }
+		public enum DoorDirection { UP, DOWN, LEFT, RIGHT, NONE }
 
-		DoorDirection doorDirection;
-		char room;
+		private DoorDirection doorDirection;
+		private char room;
 		
 		@Override
 		public boolean isRoom() {return false;}
@@ -13,6 +13,16 @@ public class RoomCell extends BoardCell {
 		@Override
 		void draw() {
 			// TODO Auto-generated method stub
+		}
+
+		public String getDoorDirection() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public char getInitial() {
+			// TODO Auto-generated method stub
+			return room;
 		}
 		
 		
