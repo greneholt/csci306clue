@@ -19,6 +19,25 @@ public class Board {
 		}
 		
 		public RoomCell GetRoomCellAt(int row, int col) {
-			return RoomCell;
+			RoomCell test = new RoomCell();
+			return test;
 		}
+
+		public ArrayList<BoardCell> getCells() {
+			return cells;
+		}
+
+		public Map<Character, String> getRooms() {
+			return rooms;
+		}
+
+		public int getNumRows() {
+			return numRows;
+		}
+
+		public int getNumColumns() {
+			return numColumns;
+		}
+		
+		
 }
