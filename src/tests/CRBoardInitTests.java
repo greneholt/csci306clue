@@ -1,5 +1,7 @@
 package tests;
 
+// Doing a static import allows me to write assertEquals rather than
+// Assert.assertEquals
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.*;
 
@@ -13,85 +15,96 @@ import clueGame.Board;
 import clueGame.BoardCell;
 import clueGame.RoomCell;
 
-public class BoardInitTests {
-	
+public class CRBoardInitTests {
+	// I made this static because I only want to set it up one 
+	// time (using @BeforeClass), no need to do setup before each test
 	private static Board board;
 	public static final int NUM_ROOMS = 11;
 	public static final int NUM_ROWS = 22;
 	public static final int NUM_COLUMNS = 23;
 	
 	@BeforeClass
-	public static void setup() {
+	public static void setUp() {
 		board = new Board();
 	}
-	
 	@Test
 	public void testRooms() {
 		Map<Character, String> rooms = board.getRooms();
-		//assure that board contains correct number of rooms
+		// Ensure we read the correct number of rooms
 		assertEquals(NUM_ROOMS, rooms.size());
-		//assure that the name corresponds to correct character
+		// Test retrieving a few from the hash, including the first
+		// and last in the file and a few others
 		assertEquals("Conservatory", rooms.get('C'));
-		assertEquals("Kitchen", rooms.get('K'));
 		assertEquals("Ballroom", rooms.get('B'));
 		assertEquals("Billiard room", rooms.get('R'));
-		assertEquals("Library", rooms.get('L'));
-		assertEquals("Study", rooms.get('S'));
 		assertEquals("Dining room", rooms.get('D'));
-		assertEquals("Lounge", rooms.get('O'));
-		assertEquals("Hall", rooms.get('H'));
-		assertEquals("Closet", rooms.get('X'));
 		assertEquals("Walkway", rooms.get('W'));
 	}
 	
 	@Test
 	public void testBoardDimensions() {
+		// Ensure we have the proper number of rows and columns
 		assertEquals(NUM_ROWS, board.getNumRows());
-		assertEquals(NUM_COLUMNS, board.getNumColumns());
+		assertEquals(NUM_COLUMNS, board.getNumColumns());		
 	}
 	
+	// Test a doorway in each direction, plus two cell that is not
+	// a doorway
 	@Test
-	public void testDoorDirections() {
-		//testing Billiard Room door
-		RoomCell room = board.getRoomCellAt(4, 8);
-		assertTrue(room.isDoorway());
-		assertEquals(RoomCell.DoorDirection.DOWN, room.getDoorDirection());
-		//testing Conservatory door
-		room = board.getRoomCellAt(4, 3);
+	public void FourDoorDirections() {
+		// Test one each RIGHT/LEFT/UP/DOWN
+		RoomCell room = board.getRoomCellAt(4, 3);
 		assertTrue(room.isDoorway());
 		assertEquals(RoomCell.DoorDirection.RIGHT, room.getDoorDirection());
-		//testing Library left door
-		room = board.getRoomCellAt(2, 13);
+		room = board.getRoomCellAt(4, 8);
+		assertTrue(room.isDoorway());
+		assertEquals(RoomCell.DoorDirection.DOWN, room.getDoorDirection());
+		room = board.getRoomCellAt(15, 18);
 		assertTrue(room.isDoorway());
 		assertEquals(RoomCell.DoorDirection.LEFT, room.getDoorDirection());
-		//testing Hallway up door
-		room = board.getRoomCellAt(7, 20);
+		room = board.getRoomCellAt(14, 11);
 		assertTrue(room.isDoorway());
 		assertEquals(RoomCell.DoorDirection.UP, room.getDoorDirection());
-		//test walkway (not door)
-		room = board.getRoomCellAt(15, 7);
-		assertFalse(room.isDoorway());
-		assertEquals(RoomCell.DoorDirection.NONE, room.getDoorDirection());
-		//test room cell (not door)
+		// Test that room pieces that aren't doors know it
 		room = board.getRoomCellAt(0, 0);
-		assertFalse(room.isDoorway());
-		assertEquals(RoomCell.DoorDirection.NONE, room.getDoorDirection());
-		
+		assertFalse(room.isDoorway());	
+		// Test that walkways are not doors
+		BoardCell cell = board.getCellAt(board.calcIndex(0, 6));
+		assertFalse(cell.isDoorway());		
+
 	}
+	
+	// Test that we have the correct number of doors
+	@Test
+	public void testNumberOfDoorways() 
+	{
+		int numDoors = 0;
+		int totalCells = board.getNumColumns() * board.getNumRows();
+		Assert.assertEquals(506, totalCells);
+		for (int i=0; i<totalCells; i++)
+		{
+			BoardCell cell = board.getCellAt(i);
+			if (cell.isDoorway())
+				numDoors++;
+		}
+		Assert.assertEquals(16, numDoors);
+	}
+
 	
 	@Test
 	public void testCalcIndex() {
-		// test corners of the board
+		// Test each corner of the board
 		assertEquals(0, board.calcIndex(0, 0));
 		assertEquals(NUM_COLUMNS-1, board.calcIndex(0, NUM_COLUMNS-1));
 		assertEquals(483, board.calcIndex(NUM_ROWS-1, 0));
 		assertEquals(505, board.calcIndex(NUM_ROWS-1, NUM_COLUMNS-1));
-		// test other locations
+		// Test a couple others
 		assertEquals(24, board.calcIndex(1, 1));
 		assertEquals(66, board.calcIndex(2, 20));		
 	}
 	
-	
+	// Test a few room cells to ensure the room initial is
+	// correct.
 	@Test
 	public void testRoomInitials() {
 		assertEquals('C', board.getRoomCellAt(0, 0).getInitial());
@@ -100,28 +113,4 @@ public class BoardInitTests {
 		assertEquals('O', board.getRoomCellAt(21, 22).getInitial());
 		assertEquals('K', board.getRoomCellAt(21, 0).getInitial());
 	}
-	
-	@Test
-	public void testNumberOfDoorways() {
-		int numDoors = 0;
-		int totalCells = board.getNumColumns() * board.getNumRows();
-		//check board size
-		Assert.assertEquals(506, totalCells);
-		
-		//calculate number of doors
-		for (int i = 0; i < NUM_ROWS; i++) {
-			for (int j = 0; j < NUM_COLUMNS; j++) {
-				BoardCell cell = board.getRoomCellAt(i, j);
-				if (cell.isDoorway())
-					numDoors++;
-			}
-		}
-		Assert.assertEquals(16, numDoors);
-	}
-	
-	@Test
-	public void testNumberOfRooms() {
-		assertEquals(9, board.getRooms().size());
-	}
-	
 }

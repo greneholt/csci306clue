@@ -18,7 +18,7 @@ public class Board {
 			return test;
 		}
 		
-		public RoomCell GetRoomCellAt(int row, int col) {
+		public RoomCell getRoomCellAt(int row, int col) {
 			RoomCell test = new RoomCell();
 			return test;
 		}
@@ -37,6 +37,26 @@ public class Board {
 
 		public int getNumColumns() {
 			return numColumns;
+		}
+
+		public BoardCell getCellAt(int calcIndex) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public LinkedList<Integer> getAdjList(int calcIndex) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public void calcTargets(int calcIndex, int i) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		public Set<BoardCell> getTargets() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 		
 		
