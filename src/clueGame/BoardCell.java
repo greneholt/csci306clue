@@ -5,7 +5,9 @@ public abstract class BoardCell {
 	int row;
 	int col;
 	
-	public boolean isWalkway() { return false; }
+	public boolean isWalkway() {
+		return false;
+	}
 
 	public boolean isRoom() {return false;}
 	

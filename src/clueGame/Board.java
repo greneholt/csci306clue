@@ -1,5 +1,7 @@
 package clueGame;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.*;
 
 public class Board {
@@ -9,18 +11,43 @@ public class Board {
 		int numRows;
 		int numColumns;
 		
-		public void loadConfigFiles() {
+		public Board() {
+			try {
+				loadConfigFiles();
+			} catch (BadConfigFormatException e) {
+				System.out.println(e.getMessage());
+			}
+		}
+		
+		public void loadConfigFiles() throws BadConfigFormatException {
+			FileReader reader = null;
+			try {
+				reader = new FileReader("ClueBoardLegend.txt");
+			} catch (FileNotFoundException e) {
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+			}
+			Scanner scan = new Scanner(reader);
+			//TODO: populate legend map
+			
+			try {
+				reader = new FileReader("ClueBoardLayout.csv");
+			} catch (FileNotFoundException e) {
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+			}
 			
 		}
 		
 		public int calcIndex(int row, int col) {
-			int test = 0;
-			return test;
+			int index = (row + 1)*col;
+			return index;
+			// TODO
 		}
 		
 		public RoomCell getRoomCellAt(int row, int col) {
-			RoomCell test = new RoomCell();
-			return test;
+			RoomCell room = new RoomCell();
+			return room;
 		}
 
 		public ArrayList<BoardCell> getCells() {
