@@ -14,4 +14,8 @@ public abstract class BoardCell {
 	public boolean isDoorway() { return false; }
 	
 	abstract void draw();
+	
+	public int getIndex() {
+		return (row + 1)*col;
+	}
 }

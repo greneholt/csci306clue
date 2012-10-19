@@ -8,10 +8,10 @@ public class Board {
 
 		ArrayList<BoardCell> cells;
 		Map<Character, String> rooms;
-		Map<BoardCell, LinkedList<BoardCell>> map = new HashMap<BoardCell, LinkedList<BoardCell>>();
-		Map<BoardCell, LinkedList<BoardCell>> mapc;
+		Map<Integer, LinkedList<Integer>> map = new HashMap<Integer, LinkedList<Integer>>();
+		Map<Integer, LinkedList<Integer>> mapc;
 		Set<BoardCell> targetSet = new HashSet<BoardCell>();
-		LinkedList<BoardCell> seen = new LinkedList<BoardCell>();
+		LinkedList<Integer> seen = new LinkedList<Integer>();
 		int numRows;
 		int numColumns;
 		
@@ -77,17 +77,17 @@ public class Board {
 			return null;
 		}
 
-		public LinkedList<BoardCell> getAdjList(int calcIndex) {
+		public LinkedList<Integer> getAdjList(int calcIndex) {
 			return map.get(calcIndex);
 		}
 
-		public void calcTargets(BoardCell calcIndex, int i) {
-			while(mapc.get(calcIndex).size() != 0) {
-				BoardCell target = mapc.get(calcIndex).removeFirst();
+		public void calcTargets(int calcIndex, int i) {
+			while(mapc.get(this.getCellAt(calcIndex)).size() != 0) {
+				int target = mapc.get(calcIndex).removeFirst();
 				seen.add(target);
-				if(seen.size() == i) {
-					targetSet.add(target);
-				}else {
+				if (seen.size() == i) {
+					targetSet.add(this.getCellAt(target));
+				} else {
 					mapc.get(target).removeFirstOccurrence(calcIndex);
 					calcTargets(target, i);
 					mapc.get(target).add(calcIndex);
@@ -101,29 +101,41 @@ public class Board {
 		}
 		
 		public void calcAdjacencies() {
-			for(int x=0; x < numColumns; x++) {
-				for(int y=0; y < numRows; y++) {
-					
+			for(int x=0; x < this.getNumColumns(); x++) {
+				for(int y=0; y < this.getNumRows(); y++) {
 					int index = calcIndex(x,y);
+					LinkedList<Integer> listPoint = new LinkedList<Integer>();
 					if (this.getCellAt(index).isWalkway()) {	// make sure cell is a walkway
-						LinkedList<BoardCell> listPoint = new LinkedList<BoardCell>();
-						
-						if (x != 0 && this.getCellAt(calcIndex(x-1, y)).isWalkway()) { // add left cell
-							listPoint.add(this.getCellAt(calcIndex(x-1, y)));
+						if (x != 0 && (this.getCellAt(calcIndex(x-1, y)).isWalkway() ||
+								this.getCellAt(calcIndex(x-1, y)).isDoorway())) { // add left cell
+							listPoint.add(this.getCellAt(calcIndex(x-1, y)).getIndex());
 						}
-						if (y != 0 && this.getCellAt(calcIndex(x, y-1)).isWalkway()) { // add above cell
-							listPoint.add(this.getCellAt(calcIndex(x, y-1)));
+						if (y != 0 && (this.getCellAt(calcIndex(x, y-1)).isWalkway() ||
+								this.getCellAt(calcIndex(x, y-1)).isDoorway())) { // add above cell
+							listPoint.add(this.getCellAt(calcIndex(x, y-1)).getIndex());
 						}
-						if (x != numColumns-1 && this.getCellAt(calcIndex(x+1, y)).isWalkway()) { // add right cell
-							listPoint.add(this.getCellAt(calcIndex(x+1, y)));
+						if (x != this.getNumColumns()-1 && (this.getCellAt(calcIndex(x+1, y)).isWalkway()
+								|| this.getCellAt(calcIndex(x+1, y)).isDoorway())) { // add right cell
+							listPoint.add(this.getCellAt(calcIndex(x+1, y)).getIndex());
 						}
-						if (y != numRows-1 && this.getCellAt(calcIndex(x,y+1)).isWalkway()) { // add below cell
-							listPoint.add(this.getCellAt(calcIndex(x,y+1)));
+						if (y != this.getNumRows()-1 && (this.getCellAt(calcIndex(x,y+1)).isWalkway()
+								|| this.getCellAt(calcIndex(x,y+1)).isDoorway())) { // add below cell
+							listPoint.add(this.getCellAt(calcIndex(x,y+1)).getIndex());
 						}
-						map.put(this.getCellAt(index), listPoint);	// add adjacency list for cell to map
+					} else if (this.getCellAt(index).isDoorway()) {
+						if (this.getRoomCellAt(y, x).getDoorDirection() == "UP") {
+							listPoint.add(this.getCellAt(calcIndex(x, y-1)).getIndex());
+						} else if (this.getRoomCellAt(y, x).getDoorDirection() == "DOWN") {
+							listPoint.add(this.getCellAt(calcIndex(x,y+1)).getIndex());
+						} else if (this.getRoomCellAt(y, x).getDoorDirection() == "RIGHT") {
+							listPoint.add(this.getCellAt(calcIndex(x+1, y)).getIndex());
+						} else if (this.getRoomCellAt(y, x).getDoorDirection() == "LEFT") {
+							listPoint.add(this.getCellAt(calcIndex(x-1, y)).getIndex());
+						}
 					}
+					map.put(index, listPoint);	// add adjacency list for cell to map
 				}
 			}
-			mapc = new HashMap<BoardCell, LinkedList<BoardCell>>(map);	// create copy of may for later use
+			mapc = new HashMap<Integer, LinkedList<Integer>>(map);	// create copy of may for later use
 		}
 }
