@@ -48,7 +48,6 @@ public class Board {
 		public int calcIndex(int row, int col) {
 			int index = (row + 1)*col;
 			return index;
-			// TODO
 		}
 		
 		public RoomCell getRoomCellAt(int row, int col) {
@@ -73,8 +72,7 @@ public class Board {
 		}
 
 		public BoardCell getCellAt(int calcIndex) {
-			// TODO Auto-generated method stub
-			return null;
+			return cells.get(calcIndex);
 		}
 
 		public LinkedList<Integer> getAdjList(int calcIndex) {

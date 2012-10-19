@@ -5,13 +5,9 @@ public abstract class BoardCell {
 	int row;
 	int col;
 	
-	public boolean isWalkway() {
-		return false;
-	}
-
-	public boolean isRoom() {return false;}
-	
-	public boolean isDoorway() { return false; }
+	public abstract boolean isWalkway();
+	public abstract boolean isRoom();
+	public abstract boolean isDoorway();
 	
 	abstract void draw();
 	

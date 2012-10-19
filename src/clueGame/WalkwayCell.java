@@ -2,13 +2,12 @@ package clueGame;
 
 public class WalkwayCell extends BoardCell {
 
-	@Override
 	public boolean isWalkway() { return true; }
+	public boolean isRoom() { return false; }
+	public boolean isDoorway() { return false; }
 	
-	@Override
 	void draw() {
 		// TODO Auto-generated method stub
 
 	}
-
 }
