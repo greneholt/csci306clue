@@ -7,9 +7,16 @@ public class RoomCell extends BoardCell {
 		private DoorDirection doorDirection;
 		private char room;
 		
-		@Override
+		public RoomCell() {
+			doorDirection = DoorDirection.NONE;
+		}
+		
+		public void setRoom(char r) {
+			this.room = r;
+		}
+		
 		public boolean isRoom() {
-			if (this.getInitial() != 'X' && !this.isWalkway()) {
+			if (this.getInitial() != 'X') { //&& !this.isWalkway()) {
 				return true;
 			} else {
 				return false;
@@ -17,11 +24,12 @@ public class RoomCell extends BoardCell {
 		}
 		
 		public boolean isWalkway() {
-			if (this.getInitial() == 'W') {
+			/*if (this.getInitial() == 'W') {
 				return true;
 			} else {
 				return false;
-			}
+			}*/
+			return false;
 		}
 		
 		public boolean isDoorway() {
@@ -37,24 +45,24 @@ public class RoomCell extends BoardCell {
 			// TODO Auto-generated method stub
 		}
 
-		public String getDoorDirection() {
-			String direction = "";
-			if(doorDirection == DoorDirection.UP) {
-				direction = "UP";
-			} else if(doorDirection == DoorDirection.DOWN) {
-				direction = "DOWN";
-			} else if(doorDirection == DoorDirection.LEFT) {
-				direction = "LEFT";
-			} else if(doorDirection == DoorDirection.RIGHT) {
-				direction = "RIGHT";
-			} else if(doorDirection == DoorDirection.NONE) {
-				direction = "NONE";
-			}
-			return direction;
+		public DoorDirection getDoorDirection() {
+			return doorDirection;
 		}
 
 		public char getInitial() {
 			return room;
+		}
+		
+		public void setDoorDirection(char d) {
+			if(d == 'U') {
+				this.doorDirection = DoorDirection.UP;
+			} else if(d == 'D') {
+				this.doorDirection = DoorDirection.DOWN;
+			} else if(d == 'L') {
+				this.doorDirection = DoorDirection.LEFT;
+			} else if(d == 'R') {
+				this.doorDirection = DoorDirection.RIGHT;
+			}
 		}
 		
 		

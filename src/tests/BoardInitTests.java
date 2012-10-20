@@ -121,7 +121,7 @@ public class BoardInitTests {
 	
 	@Test
 	public void testNumberOfRooms() {
-		assertEquals(9, board.getRooms().size());
+		assertEquals(11, board.getRooms().size());
 	}
 	
 }
