@@ -14,6 +14,8 @@ public class Board {
 		LinkedList<Integer> seen = new LinkedList<Integer>();
 		int numRows;
 		int numColumns;
+		int counter = 0;
+		int firstSpot;
 		
 		public Board() {
 			try {
@@ -126,12 +128,19 @@ public class Board {
 		}
 
 		public void calcTargets(int calcIndex, int i) {
+			System.out.println((calcIndex / 23) + " " + (calcIndex % 23));
+			if(counter == 0) {
+				firstSpot = calcIndex;
+				counter++;
+				System.out.println(firstSpot);
+			}
 			mapc = new HashMap<Integer, LinkedList<Integer>>(map);	// create copy of map
-			while(mapc.get(this.getCellAt(calcIndex).getIndex()).size() > 0) {
+			while(mapc.get(calcIndex).size() != 0) {
 				int target = mapc.get(calcIndex).removeFirst();
 				seen.add(target);
 				if (seen.size() == i) {
-					targetSet.add(this.getCellAt(target));
+					System.out.println(target / 23 + " " + target % 23 + " *****");
+					targetSet.add(getCellAt(target));
 				} else {
 					mapc.get(target).removeFirstOccurrence(calcIndex);
 					calcTargets(target, i);
@@ -139,15 +148,16 @@ public class Board {
 				}
 				seen.removeLast();
 			}
-			if(targetSet.contains(getCellAt(calcIndex))) {
-				//targetSet.remove(getCellAt(calcIndex));
+			if(targetSet.contains(getCellAt(firstSpot))) {
+				targetSet.remove(getCellAt(firstSpot));
 			}
 		}
 
 		public Set<BoardCell> getTargets() {
 			Set<BoardCell> targetSet1 = new HashSet<BoardCell>(targetSet);
 			targetSet = new HashSet<BoardCell>();
-			this.calcAdjacencies();
+			counter = 0;
+			calcAdjacencies();
 			return targetSet1;
 		}
 		
@@ -231,10 +241,12 @@ public class Board {
 		public static void main(String [] args) {
 			Board b = new Board();
 			
-			b.calcTargets(b.calcIndex(21,7), 4);
+			b.calcTargets(b.calcIndex(14,0), 4);
 			Set<BoardCell> targets = b.getTargets();
 			for (BoardCell t : targets) {
-				System.out.println(t.getIndex() + " ");
+				int first = t.getIndex() / 23;
+				int second = t.getIndex() % 23;
+				System.out.println(first + " " + second + " <-----");
 			}
 			/*LinkedList<Integer> ll = b.getAdjList(b.calcIndex(20, 7));
 			System.out.println("BEFORE NEXT");
