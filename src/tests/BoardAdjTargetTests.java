@@ -151,9 +151,9 @@ public class BoardAdjTargetTests {
 	public void testTargetsOneStep() {
 		board.calcTargets(board.calcIndex(21, 7), 1);
 		Set<BoardCell> targets= board.getTargets();
-		Assert.assertEquals(2, targets.size());
+		Assert.assertEquals(1, targets.size());
 		Assert.assertTrue(targets.contains(board.getCellAt(board.calcIndex(20, 7))));
-		Assert.assertTrue(targets.contains(board.getCellAt(board.calcIndex(21, 6))));	
+			
 		
 		board.calcTargets(board.calcIndex(14, 0), 1);
 		targets= board.getTargets();
@@ -167,9 +167,8 @@ public class BoardAdjTargetTests {
 	public void testTargetsTwoSteps() {
 		board.calcTargets(board.calcIndex(21, 7), 2);
 		Set<BoardCell> targets= board.getTargets();
-		Assert.assertEquals(2, targets.size());
+		Assert.assertEquals(1, targets.size());
 		Assert.assertTrue(targets.contains(board.getCellAt(board.calcIndex(19, 7))));
-		Assert.assertTrue(targets.contains(board.getCellAt(board.calcIndex(20, 6))));
 		
 		board.calcTargets(board.calcIndex(14, 0), 2);
 		targets= board.getTargets();
@@ -181,13 +180,13 @@ public class BoardAdjTargetTests {
 	// Tests of just walkways, 4 steps
 	@Test
 	public void testTargetsFourSteps() {
-		board.calcTargets(board.calcIndex(21, 7), 4);
+		board.calcTargets(board.calcIndex(0, 18), 4);
 		Set<BoardCell> targets= board.getTargets();
 		Assert.assertEquals(4, targets.size());
-		Assert.assertTrue(targets.contains(board.getCellAt(board.calcIndex(17, 7))));
-		Assert.assertTrue(targets.contains(board.getCellAt(board.calcIndex(19, 7))));
-		Assert.assertTrue(targets.contains(board.getCellAt(board.calcIndex(18, 6))));
-		Assert.assertTrue(targets.contains(board.getCellAt(board.calcIndex(20, 6))));
+		Assert.assertTrue(targets.contains(board.getCellAt(board.calcIndex(4, 18))));
+		Assert.assertTrue(targets.contains(board.getCellAt(board.calcIndex(3, 19))));
+		Assert.assertTrue(targets.contains(board.getCellAt(board.calcIndex(1, 19))));
+		Assert.assertTrue(targets.contains(board.getCellAt(board.calcIndex(2, 18))));
 		
 		// Includes a path that doesn't have enough length
 		board.calcTargets(board.calcIndex(14, 0), 4);

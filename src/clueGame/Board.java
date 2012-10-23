@@ -28,7 +28,7 @@ public class Board {
 		public void loadConfigFiles() throws BadConfigFormatException {
 			FileReader reader = null;
 			try {
-				reader = new FileReader("CR-ClueLegend.txt");	// use CR-ClueLegend.txt for Cyndi's jUnit tests
+				reader = new FileReader("ClueBoardLegend.txt");	// use CR-ClueLegend.txt for Cyndi's jUnit tests
 			} catch (FileNotFoundException e) {
 				System.out.println(e.getMessage());
 				e.printStackTrace();
@@ -48,7 +48,7 @@ public class Board {
 			}
 			
 			try {
-				reader = new FileReader("CR-ClueLayout.csv");	// use CR-ClueLayout.csv for Cyndi's jUnit tests
+				reader = new FileReader("ClueBoardLayout.csv");	// use CR-ClueLayout.csv for Cyndi's jUnit tests
 			} catch (FileNotFoundException e) {
 				System.out.println(e.getMessage());
 				e.printStackTrace();
@@ -128,8 +128,7 @@ public class Board {
 
 		public void calcTargets(int calcIndex, int i) {
 			Map<Integer, LinkedList<Integer>> mapc = new HashMap<Integer, LinkedList<Integer>>(map);	// create copy of map
-			while(mapc.get(calcIndex).size() != 0) {
-				int target = mapc.get(calcIndex).removeFirst();
+			for (Integer target: mapc.get(calcIndex)) {
 				if(!path.contains(calcIndex)) {	// add cell at calcIndex to path if not in path
 					path.add(calcIndex);
 				}
@@ -138,8 +137,6 @@ public class Board {
 					if (target != path.peekFirst() && !path.contains(target)) {
 						targetSet.add(getCellAt(target));
 						System.out.println("Added t " + target + "\tPeekFirst = " + path.peekFirst());
-					} else {
-						break;
 					}
 				} else if (getCellAt(target).isDoorway()) {
 					targetSet.add(getCellAt(target));
@@ -244,7 +241,7 @@ public class Board {
 			
 		}
 		
-		public static void main(String [] args) {
+		/*public static void main(String [] args) {	// DEBUGGING!!!
 			Board b = new Board();
 			
 			b.calcTargets(b.calcIndex(14,0), 6);
@@ -253,13 +250,13 @@ public class Board {
 				int first = t.getIndex() / 23;
 				int second = t.getIndex() % 23;
 				System.out.println(first + " " + second + " <-----");
-			}*/
+			}
 			System.out.println("TargetSet Contents: ");
 			Set<BoardCell> targets = b.getTargets();
 			for (BoardCell t : targets) {
 				System.out.println(t.getIndex());
 			}
-			LinkedList<Integer> ll = b.getAdjList(b.calcIndex(14, 4));
+			LinkedList<Integer> ll = b.getAdjList(b.calcIndex(15, 2));
 			System.out.println("BEFORE NEXT");
 			for( int l : ll) {
 				System.out.println(l);
@@ -269,6 +266,6 @@ public class Board {
 			System.out.println("NEXT");
 			for (BoardCell t : targets) {
 				System.out.println(t.getIndex() + " ");
-			}*/
-		}
+			}
+		}*/
 }
