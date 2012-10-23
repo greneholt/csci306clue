@@ -5,12 +5,14 @@ package tests;
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.*;
 
+import java.io.FileNotFoundException;
 import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import clueGame.BadConfigFormatException;
 import clueGame.Board;
 import clueGame.BoardCell;
 import clueGame.RoomCell;
@@ -24,8 +26,9 @@ public class BoardInitTests2 {
 	public static final int NUM_COLUMNS = 23;
 	
 	@BeforeClass
-	public static void setUp() {
+	public static void setUp() throws FileNotFoundException, BadConfigFormatException {
 		board = new Board();
+		board.loadConfigFiles("ClueBoardLegend.txt", "ClueBoardLayout.csv");
 	}
 	@Test
 	public void testRooms() {

@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.util.*;
 
 public class Board {
-
 	ArrayList<BoardCell> cells = new ArrayList<BoardCell>();
 	Map<Character, String> rooms = new TreeMap<Character, String>();
 	Map<Integer, LinkedList<Integer>> map = new HashMap<Integer, LinkedList<Integer>>();
@@ -17,43 +16,18 @@ public class Board {
 	int firstSpot;
 
 	public Board() {
-		try {
-			loadConfigFiles();
-		} catch (BadConfigFormatException e) {
-			System.out.println(e.getMessage());
-		}
-		this.calcAdjacencies();
+		
 	}
 
-	public void loadConfigFiles() throws BadConfigFormatException {
-		FileReader reader = null;
-		try {
-			reader = new FileReader("ClueBoardLegend.txt"); // use CR-ClueLegend.txt for Cyndi's jUnit tests
-		} catch (FileNotFoundException e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-		}
-		Scanner scan = new Scanner(reader);
-		// populate legend map
-		while (scan.hasNext()) {
-			String wholeString = scan.nextLine();
-			if (!wholeString.contains(", ")) {
-				throw new BadConfigFormatException();
-			}
-			String[] stringArr = wholeString.split(", ");
-			String character = stringArr[0];
-			String room = stringArr[1];
-			char c = character.charAt(0);
-			rooms.put(c, room);
-		}
+	public void loadConfigFiles(String legendFile, String boardFile) throws BadConfigFormatException, FileNotFoundException {
+		loadLegend(legendFile);
+		loadBoard(boardFile);
+		calcAdjacencies();
+	}
 
-		try {
-			reader = new FileReader("ClueBoardLayout.csv"); // use CR-ClueLayout.csv for Cyndi's jUnit tests
-		} catch (FileNotFoundException e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-		}
-		scan = new Scanner(reader);
+	private void loadBoard(String boardFile) throws BadConfigFormatException, FileNotFoundException {
+		FileReader reader = new FileReader(boardFile);
+		Scanner scan = new Scanner(reader);
 		// populate cell list
 		int j = 0;
 		while (scan.hasNext()) {
@@ -89,6 +63,23 @@ public class Board {
 		numRows = j;
 	}
 
+	private void loadLegend(String legendFile) throws BadConfigFormatException, FileNotFoundException {
+		FileReader reader = new FileReader(legendFile);
+		Scanner scan = new Scanner(reader);
+		// populate legend map
+		while (scan.hasNext()) {
+			String wholeString = scan.nextLine();
+			if (!wholeString.contains(", ")) {
+				throw new BadConfigFormatException();
+			}
+			String[] stringArr = wholeString.split(", ");
+			String character = stringArr[0];
+			String room = stringArr[1];
+			char c = character.charAt(0);
+			rooms.put(c, room);
+		}
+	}
+
 	public int calcIndex(int row, int col) {
 		int index = (row * numColumns) + col;
 		return index;
@@ -98,7 +89,7 @@ public class Board {
 		if (cells.get(this.calcIndex(row, col)).isRoom()) {
 			return (RoomCell) cells.get(this.calcIndex(row, col));
 		} else {
-			return new RoomCell();
+			return null;
 		}
 	}
 
