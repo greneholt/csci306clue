@@ -12,6 +12,7 @@ public class Board {
 		Map<Integer, LinkedList<Integer>> mapc;
 		Set<BoardCell> targetSet = new HashSet<BoardCell>();
 		LinkedList<Integer> seen = new LinkedList<Integer>();
+		LinkedList<Integer> path = new LinkedList<Integer>();
 		int numRows;
 		int numColumns;
 		int counter = 0;
@@ -35,7 +36,7 @@ public class Board {
 				e.printStackTrace();
 			}
 			Scanner scan = new Scanner(reader);
-			//TODO: populate legend map
+			// populate legend map
 			while(scan.hasNext()) {
 				String wholeString = scan.nextLine();
 				if (!wholeString.contains(", ")) {
@@ -55,7 +56,7 @@ public class Board {
 				e.printStackTrace();
 			}
 			scan = new Scanner(reader);
-			//TODO: populate cell list
+			// populate cell list
 			int j = 0;
 			while(scan.hasNext()) {
 				String wholeString = scan.nextLine();
@@ -128,29 +129,45 @@ public class Board {
 		}
 
 		public void calcTargets(int calcIndex, int i) {
-			System.out.println((calcIndex / 23) + " " + (calcIndex % 23));
+			/*System.out.println((calcIndex / 23) + " " + (calcIndex % 23));
 			if(counter == 0) {
 				firstSpot = calcIndex;
 				counter++;
 				System.out.println(firstSpot);
-			}
+			}*/
 			mapc = new HashMap<Integer, LinkedList<Integer>>(map);	// create copy of map
 			while(mapc.get(calcIndex).size() != 0) {
 				int target = mapc.get(calcIndex).removeFirst();
 				seen.add(target);
-				if (seen.size() == i) {
-					System.out.println(target / 23 + " " + target % 23 + " *****");
-					targetSet.add(getCellAt(target));
-				} else {
-					mapc.get(target).removeFirstOccurrence(calcIndex);
-					calcTargets(target, i);
-					mapc.get(target).add(calcIndex);
+				if(!path.contains(calcIndex)) {
+					path.add(calcIndex);
 				}
+				System.out.println(calcIndex + "\t t " + target);
+				if (path.size() == i) {
+					//System.out.println(target / 23 + " " + target % 23 + " *****");
+					if (target != path.peekFirst()) {
+						targetSet.add(getCellAt(target));
+						System.out.println("Added t " + target + "\tPeekFirst = " + path.peekFirst());
+					} else {
+						continue;
+					}
+					//targetSet.add(getCellAt(target));
+				} else {
+					if(!path.contains(target) && target != path.peekFirst()) {
+						mapc.get(target).removeFirstOccurrence(calcIndex);
+						calcTargets(target, i);
+						mapc.get(target).add(calcIndex);
+					} else {
+						break;
+					}
+				}
+				System.out.println("- " + path.peekLast());
+				path.removeLast();
 				seen.removeLast();
 			}
-			if(targetSet.contains(getCellAt(firstSpot))) {
+			/*if(targetSet.contains(getCellAt(firstSpot))) {
 				targetSet.remove(getCellAt(firstSpot));
-			}
+			}*/
 		}
 
 		public Set<BoardCell> getTargets() {
@@ -158,6 +175,8 @@ public class Board {
 			targetSet = new HashSet<BoardCell>();
 			counter = 0;
 			calcAdjacencies();
+			path.clear();
+			seen.clear();
 			return targetSet1;
 		}
 		
@@ -242,11 +261,16 @@ public class Board {
 			Board b = new Board();
 			
 			b.calcTargets(b.calcIndex(14,0), 4);
-			Set<BoardCell> targets = b.getTargets();
+			/*Set<BoardCell> targets = b.getTargets();
 			for (BoardCell t : targets) {
 				int first = t.getIndex() / 23;
 				int second = t.getIndex() % 23;
 				System.out.println(first + " " + second + " <-----");
+			}*/
+			System.out.println("TargetSet Contents: ");
+			Set<BoardCell> targets = b.getTargets();
+			for (BoardCell t : targets) {
+				System.out.println(t.getIndex());
 			}
 			/*LinkedList<Integer> ll = b.getAdjList(b.calcIndex(20, 7));
 			System.out.println("BEFORE NEXT");
