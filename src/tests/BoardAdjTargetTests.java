@@ -1,5 +1,6 @@
 package tests;
 
+import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -7,14 +8,17 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import clueGame.BadConfigFormatException;
 import clueGame.Board;
 import clueGame.BoardCell;
 
 public class BoardAdjTargetTests {
 	private static Board board;
+	
 	@BeforeClass
-	public static void setUp() {
+	public static void setUp() throws FileNotFoundException, BadConfigFormatException {
 		board = new Board();
+		board.loadConfigFiles("ClueBoardLegend.txt", "ClueBoardLayout.csv");
 	}
 
 	// Ensure that player does not move around within room

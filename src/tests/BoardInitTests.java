@@ -3,12 +3,14 @@ package tests;
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.*;
 
+import java.io.FileNotFoundException;
 import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import clueGame.BadConfigFormatException;
 import clueGame.Board;
 import clueGame.BoardCell;
 import clueGame.RoomCell;
@@ -21,8 +23,9 @@ public class BoardInitTests {
 	public static final int NUM_COLUMNS = 23;
 	
 	@BeforeClass
-	public static void setup() {
+	public static void setup() throws FileNotFoundException, BadConfigFormatException {
 		board = new Board();
+		board.loadConfigFiles("ClueBoardLegend.txt", "ClueBoardLayout.csv");
 	}
 	
 	@Test
@@ -69,9 +72,8 @@ public class BoardInitTests {
 		assertTrue(room.isDoorway());
 		assertEquals(RoomCell.DoorDirection.UP, room.getDoorDirection());
 		//test walkway (not door)
-		room = board.getRoomCellAt(15, 7);
-		assertFalse(room.isDoorway());
-		assertEquals(RoomCell.DoorDirection.NONE, room.getDoorDirection());
+		BoardCell cell = board.getCellAt(board.calcIndex(15, 7));
+		assertFalse(cell.isDoorway());
 		//test room cell (not door)
 		room = board.getRoomCellAt(0, 0);
 		assertFalse(room.isDoorway());
@@ -111,7 +113,7 @@ public class BoardInitTests {
 		//calculate number of doors
 		for (int i = 0; i < NUM_ROWS; i++) {
 			for (int j = 0; j < NUM_COLUMNS; j++) {
-				BoardCell cell = board.getRoomCellAt(i, j);
+				BoardCell cell = board.getCellAt(board.calcIndex(i, j));
 				if (cell.isDoorway())
 					numDoors++;
 			}
