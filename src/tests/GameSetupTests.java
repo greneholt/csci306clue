@@ -12,8 +12,9 @@ public class GameSetupTests {
 	}
 
 	@Test
-	public void test() {
-		fail("Not yet implemented");
+	public void peopleLoaded() {
+		
+		assertEquals(0, 2);
 	}
 
 }
