@@ -220,9 +220,11 @@ public class Board {
 
 	public Board() {
 		try {
-			loadConfigFiles();
+			loadConfigFiles("board.csv","legend.csv");
 		} catch (BadConfigFormatException e) {
 			System.out.println(e.getMessage());
+		}catch (FileNotFoundException f){
+			//The other students forgot this.
 		}
 		this.calcAdjacencies();
 	}
