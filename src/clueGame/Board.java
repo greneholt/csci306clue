@@ -17,7 +17,6 @@ public class Board {
 	Set<Card> deck = new HashSet<Card>();
 	int numRows;
 	int numColumns;
-	int counter = 0; //TODO still not sure what this does.
 	int firstSpot;
 
 	public void selectAnswer(){
@@ -164,7 +163,6 @@ public class Board {
 	public Set<BoardCell> getTargets() {
 		Set<BoardCell> targetSet1 = new HashSet<BoardCell>(targetSet);
 		targetSet = new HashSet<BoardCell>();
-		counter = 0;
 		calcAdjacencies();
 		path.clear();
 		return targetSet1;
@@ -252,9 +250,6 @@ public class Board {
 	}
 	public Set<Card> getDeck() {
 		return deck;
-	}
-	public int getCounter() {
-		return counter;
 	}
 	public int getFirstSpot() {
 		return firstSpot;
