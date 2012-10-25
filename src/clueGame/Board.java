@@ -4,16 +4,14 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
 
-import org.junit.runner.Computer;
-
 import clueGame.RoomCell.DoorDirection;
 
 public class Board {
 	ArrayList<BoardCell> cells = new ArrayList<BoardCell>();
 	Map<Character, String> rooms = new TreeMap<Character, String>();
-	Map<Integer, LinkedList<Integer>> map = new HashMap<Integer, LinkedList<Integer>>();
-	Set<BoardCell> targetSet = new HashSet<BoardCell>();
-	LinkedList<Integer> path = new LinkedList<Integer>();
+	Map<Integer, LinkedList<Integer>> adjacencies = new HashMap<Integer, LinkedList<Integer>>();
+	Set<BoardCell> targets = new HashSet<BoardCell>();
+	Set<Integer> path = new HashSet<Integer>();
 	Set<ComputerPlayer> opponents = new HashSet<ComputerPlayer>();
 	HumanPlayer you = new HumanPlayer();
 	Set<Card> deck = new HashSet<Card>();
@@ -21,24 +19,26 @@ public class Board {
 	int numColumns;
 	int firstSpot;
 
-	public void selectAnswer(){
-		
-	}
-	public void deal(){
+	public void selectAnswer() {
 
 	}
-	public void deal(ArrayList<String> cardlist){
-		
+
+	public void deal() {
+
 	}
-	public boolean handleSuggestion(String person, String weapon, String room, boolean accuse){
-		//I don't see the need to have two separate functions for suggestions and accusation.
+
+	public void deal(ArrayList<String> cardlist) {
+
+	}
+
+	public boolean handleSuggestion(String person, String weapon, String room, boolean accuse) {
+		// I don't see the need to have two separate functions for suggestions and accusation.
 		return false;
 	}
 
 	public void loadConfigFiles(String legendFile, String boardFile) throws BadConfigFormatException, FileNotFoundException {
 		loadLegend(legendFile);
 		loadBoard(boardFile);
-		calcAdjacencies();
 	}
 
 	private void loadBoard(String boardFile) throws BadConfigFormatException, FileNotFoundException {
@@ -125,143 +125,118 @@ public class Board {
 		return numColumns;
 	}
 
-	public BoardCell getCellAt(int calcIndex) {
-		return cells.get(calcIndex);
+	public BoardCell getCellAt(int i) {
+		return cells.get(i);
 	}
 
-	public LinkedList<Integer> getAdjList(int calcIndex) {
-		return map.get(calcIndex);
-	}
+	public LinkedList<Integer> getAdjList(int i) {
+		if (adjacencies.containsKey(i)) {
+			return adjacencies.get(i);
+		}
 
-	public void calcTargets(int calcIndex, int steps) {
-		Map<Integer, LinkedList<Integer>> mapc = new HashMap<Integer, LinkedList<Integer>>(map); // create copy of map
-		for (Integer neighbor : mapc.get(calcIndex)) {
-			if (!path.contains(calcIndex)) { // add cell at calcIndex to path if not in path
-				path.add(calcIndex);
-			}
-			if (path.size() >= steps) { // if number of steps (roll) has been reached, add the cell at target
-				if (!path.contains(neighbor)) {
-					targetSet.add(getCellAt(neighbor));
-				}
-			} else if (getCellAt(neighbor).isDoorway()) {
-				targetSet.add(getCellAt(neighbor));
-			} else {
-				if (!path.contains(neighbor)) {
-					mapc.get(neighbor).removeFirstOccurrence(calcIndex);
-					calcTargets(neighbor, steps);
-					mapc.get(neighbor).add(calcIndex);
-				} else {
+		LinkedList<Integer> neighbors = new LinkedList<Integer>();
+		int column = i % numColumns;
+		int row = i / numColumns;
+		BoardCell adj;
+		BoardCell cell = getCellAt(i);
+
+		adjacencies.put(i, neighbors);
+
+		if (cell.isRoom()) {
+			// only doorways have adjacencies, and they only have one, so short-circuit
+
+			// if a door was placed facing an edge, this would be invalid, but the board should not be set up that way
+			if (cell.isDoorway()) {
+				switch (((RoomCell) cell).getDoorDirection()) {
+				case RIGHT:
+					neighbors.add(i + 1);
+					break;
+				case LEFT:
+					neighbors.add(i - 1);
+					break;
+				case UP:
+					neighbors.add(i - numColumns);
+					break;
+				case DOWN:
+					neighbors.add(i + numColumns);
 					break;
 				}
 			}
-			path.removeLast();
+			return neighbors;
 		}
+
+		if (column > 0) {
+			adj = getCellAt(i - 1);// the cell to the left
+
+			if (adj.isWalkway() || (adj.isDoorway() && ((RoomCell) adj).getDoorDirection() == DoorDirection.RIGHT)) {
+				neighbors.add(i - 1);
+			}
+		}
+
+		if (column < numColumns - 1) {
+			adj = getCellAt(i + 1);// the cell to the right
+
+			if (adj.isWalkway() || (adj.isDoorway() && ((RoomCell) adj).getDoorDirection() == DoorDirection.LEFT)) {
+				neighbors.add(i + 1);
+			}
+		}
+
+		if (row > 0) {
+			adj = getCellAt(i - numColumns);// the cell above
+
+			if (adj.isWalkway() || (adj.isDoorway() && ((RoomCell) adj).getDoorDirection() == DoorDirection.DOWN)) {
+				neighbors.add(i - numColumns);
+			}
+		}
+
+		if (row < numRows - 1) {
+			adj = getCellAt(i + numColumns);// the cell below
+
+			if (adj.isWalkway() || (adj.isDoorway() && ((RoomCell) adj).getDoorDirection() == DoorDirection.UP)) {
+				neighbors.add(i + numColumns);
+			}
+		}
+
+		return neighbors;
 	}
 
-	public Set<BoardCell> getTargets() {
-		Set<BoardCell> targetSet1 = new HashSet<BoardCell>(targetSet);
-		targetSet = new HashSet<BoardCell>();
-		calcAdjacencies();
+	public Set<BoardCell> getTargets(int i, int steps) {
+		targets = new HashSet<BoardCell>();
 		path.clear();
-		return targetSet1;
+		path.add(i);
+		calcTargets(i, steps);
+		return targets;
 	}
 
-	public void calcAdjacencies() {
-		for (int i = 0; i < numRows * numColumns; i++) {
-			LinkedList<Integer> cells = new LinkedList<Integer>();
-			int column = i % numColumns;
-			int row = i / numColumns;
-			BoardCell adj;
-			BoardCell cell = getCellAt(i);
-
-			map.put(i, cells);
-
-			// only doorways have adjacencies, and they only have one, so short-circuit
-			if (cell.isRoom()) {
-				// if a door was placed facing an edge, this would be invalid, but the board should not be set up that way
-				if (cell.isDoorway()) {
-					switch (((RoomCell) cell).getDoorDirection()) {
-					case RIGHT:
-						cells.add(i + 1);
-						break;
-					case LEFT:
-						cells.add(i - 1);
-						break;
-					case UP:
-						cells.add(i - numColumns);
-						break;
-					case DOWN:
-						cells.add(i + numColumns);
-						break;
-					}
-				}
+	private void calcTargets(int calcIndex, int steps) {
+		for (Integer neighbor : getAdjList(calcIndex)) {
+			if (path.contains(neighbor))
 				continue;
+
+			path.add(neighbor);
+
+			// we include the initial cell in the path, so the path size has to exceed steps by one
+			if (path.size() > steps || getCellAt(neighbor).isDoorway()) {
+				targets.add(getCellAt(neighbor));
+			} else {
+				calcTargets(neighbor, steps);
 			}
-
-			if (column > 0) {
-				adj = getCellAt(i - 1);// the cell to the left
-
-				if (adj.isWalkway() || (adj.isDoorway() && ((RoomCell) adj).getDoorDirection() == DoorDirection.RIGHT)) {
-					cells.add(i - 1);
-				}
-			}
-
-			if (column < numColumns - 1) {
-				adj = getCellAt(i + 1);// the cell to the right
-
-				if (adj.isWalkway() || (adj.isDoorway() && ((RoomCell) adj).getDoorDirection() == DoorDirection.LEFT)) {
-					cells.add(i + 1);
-				}
-			}
-
-			if (row > 0) {
-				adj = getCellAt(i - numColumns);// the cell above
-
-				if (adj.isWalkway() || (adj.isDoorway() && ((RoomCell) adj).getDoorDirection() == DoorDirection.DOWN)) {
-					cells.add(i - numColumns);
-				}
-			}
-
-			if (row < numRows - 1) {
-				adj = getCellAt(i + numColumns);// the cell below
-
-				if (adj.isWalkway() || (adj.isDoorway() && ((RoomCell) adj).getDoorDirection() == DoorDirection.UP)) {
-					cells.add(i + numColumns);
-				}
-			}
+			path.remove(neighbor);
 		}
 	}
 
-	public Board() {
-		try {
-			loadConfigFiles("board.csv","legend.csv");
-		} catch (BadConfigFormatException e) {
-			System.out.println(e.getMessage());
-		}catch (FileNotFoundException f){
-			//The other students forgot this.
-		}
-		this.calcAdjacencies();
-	}
-	
-	//The following are just for use by the JUnit tests.
-	public Map<Integer, LinkedList<Integer>> getMap() {
-		return map;
-	}
-	public Set<BoardCell> getTargetSet() {
-		return targetSet;
-	}
-	public LinkedList<Integer> getPath() {
-		return path;
-	}
 	public Set<ComputerPlayer> getOpponents() {
 		return opponents;
 	}
+
 	public HumanPlayer getYou() {
 		return you;
 	}
+
 	public Set<Card> getDeck() {
 		return deck;
 	}
+
 	public int getFirstSpot() {
 		return firstSpot;
 	}
