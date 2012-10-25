@@ -4,12 +4,17 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
 
+import org.junit.runner.Computer;
+
 public class Board {
 	ArrayList<BoardCell> cells = new ArrayList<BoardCell>();
 	Map<Character, String> rooms = new TreeMap<Character, String>();
 	Map<Integer, LinkedList<Integer>> map = new HashMap<Integer, LinkedList<Integer>>();
 	Set<BoardCell> targetSet = new HashSet<BoardCell>();
 	LinkedList<Integer> path = new LinkedList<Integer>();
+	Set<ComputerPlayer> opponents = new HashSet<ComputerPlayer>();
+	HumanPlayer you = new HumanPlayer();
+	Set<Card> deck = new HashSet<Card>();
 	int numRows;
 	int numColumns;
 	int counter = 0;
