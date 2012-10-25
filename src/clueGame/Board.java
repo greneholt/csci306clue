@@ -17,7 +17,7 @@ public class Board {
 	Set<Card> deck = new HashSet<Card>();
 	int numRows;
 	int numColumns;
-	int counter = 0;
+	int counter = 0; //TODO still not sure what this does.
 	int firstSpot;
 
 	public void selectAnswer(){
@@ -233,6 +233,8 @@ public class Board {
 		}
 		this.calcAdjacencies();
 	}
+	
+	//The following are just for use by the JUnit tests.
 	public Map<Integer, LinkedList<Integer>> getMap() {
 		return map;
 	}
