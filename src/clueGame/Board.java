@@ -233,5 +233,29 @@ public class Board {
 		}
 		this.calcAdjacencies();
 	}
+	public Map<Integer, LinkedList<Integer>> getMap() {
+		return map;
+	}
+	public Set<BoardCell> getTargetSet() {
+		return targetSet;
+	}
+	public LinkedList<Integer> getPath() {
+		return path;
+	}
+	public Set<ComputerPlayer> getOpponents() {
+		return opponents;
+	}
+	public HumanPlayer getYou() {
+		return you;
+	}
+	public Set<Card> getDeck() {
+		return deck;
+	}
+	public int getCounter() {
+		return counter;
+	}
+	public int getFirstSpot() {
+		return firstSpot;
+	}
 
 }
