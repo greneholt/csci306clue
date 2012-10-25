@@ -6,6 +6,8 @@ import java.util.*;
 
 import org.junit.runner.Computer;
 
+import clueGame.RoomCell.DoorDirection;
+
 public class Board {
 	ArrayList<BoardCell> cells = new ArrayList<BoardCell>();
 	Map<Character, String> rooms = new TreeMap<Character, String>();
@@ -131,31 +133,27 @@ public class Board {
 		return map.get(calcIndex);
 	}
 
-	public void calcTargets(int calcIndex, int i) {
+	public void calcTargets(int calcIndex, int steps) {
 		Map<Integer, LinkedList<Integer>> mapc = new HashMap<Integer, LinkedList<Integer>>(map); // create copy of map
-		for (Integer target : mapc.get(calcIndex)) {
+		for (Integer neighbor : mapc.get(calcIndex)) {
 			if (!path.contains(calcIndex)) { // add cell at calcIndex to path if not in path
 				path.add(calcIndex);
 			}
-			System.out.println(calcIndex + "\t t " + target);
-			if (path.size() >= i) { // if number of steps (roll) has been reached, add the cell at target
-				if (target != path.peekFirst() && !path.contains(target)) {
-					targetSet.add(getCellAt(target));
-					System.out.println("Added t " + target + "\tPeekFirst = " + path.peekFirst());
+			if (path.size() >= steps) { // if number of steps (roll) has been reached, add the cell at target
+				if (!path.contains(neighbor)) {
+					targetSet.add(getCellAt(neighbor));
 				}
-			} else if (getCellAt(target).isDoorway()) {
-				targetSet.add(getCellAt(target));
-				System.out.println("Added t " + target + "\tPeekFirst = " + path.peekFirst());
+			} else if (getCellAt(neighbor).isDoorway()) {
+				targetSet.add(getCellAt(neighbor));
 			} else {
-				if (!path.contains(target) && target != path.peekFirst()) {
-					mapc.get(target).removeFirstOccurrence(calcIndex);
-					calcTargets(target, i);
-					mapc.get(target).add(calcIndex);
+				if (!path.contains(neighbor)) {
+					mapc.get(neighbor).removeFirstOccurrence(calcIndex);
+					calcTargets(neighbor, steps);
+					mapc.get(neighbor).add(calcIndex);
 				} else {
 					break;
 				}
 			}
-			System.out.println("- " + path.peekLast());
 			path.removeLast();
 		}
 	}
@@ -169,56 +167,69 @@ public class Board {
 	}
 
 	public void calcAdjacencies() {
-		// Map<Character, LinkedList<Integer>> roomAdj = new HashMap<Character, LinkedList<Integer>>();
-		// find ROOM adjacencies
-		/*
-		 * If one would ever want to be able to exit a room from a different door, uncomment the code that is in this method, and comment the code with //*** around it for(int x=0; x <
-		 * this.getNumColumns(); x++) { for(int y=0; y < this.getNumRows(); y++) { int index = calcIndex(y,x); if(this.getCellAt(index).isDoorway()) { int indexAdj = -1; if (this.getRoomCellAt(y,
-		 * x).getDoorDirection() == RoomCell.DoorDirection.UP) { indexAdj = this.getCellAt(calcIndex(y-1,x)).getIndex(); } else if (this.getRoomCellAt(y, x).getDoorDirection() ==
-		 * RoomCell.DoorDirection.DOWN) { indexAdj = this.getCellAt(calcIndex(y+1,x)).getIndex(); } else if (this.getRoomCellAt(y, x).getDoorDirection() == RoomCell.DoorDirection.RIGHT) { indexAdj =
-		 * this.getCellAt(calcIndex(y,x+1)).getIndex(); } else if (this.getRoomCellAt(y, x).getDoorDirection() == RoomCell.DoorDirection.LEFT) { indexAdj = this.getCellAt(calcIndex(y,x-1)).getIndex();
-		 * } char initial = this.getRoomCellAt(y,x).getInitial(); if(roomAdj.containsKey(initial)) { roomAdj.get(initial).add(indexAdj); } else { LinkedList<Integer> list = new LinkedList<Integer>();
-		 * list.add(indexAdj); roomAdj.put(initial, list); } } } }
-		 */
-		// add adjacencies for all cells
-		for (int x = 0; x < this.getNumRows(); x++) {
-			for (int y = 0; y < this.getNumColumns(); y++) {
-				int index = calcIndex(x, y);
-				LinkedList<Integer> listPoint = new LinkedList<Integer>();
-				if (this.getCellAt(index).isWalkway()) { // make sure cell is a walkway
-					if (x != 0 && (this.getCellAt(calcIndex(x - 1, y)).isWalkway() || this.getCellAt(calcIndex(x - 1, y)).isDoorway())) { // add above cell
-						listPoint.add(this.getCellAt(calcIndex(x - 1, y)).getIndex());
-					}
-					if (y != 0 && (this.getCellAt(calcIndex(x, y - 1)).isWalkway() || this.getCellAt(calcIndex(x, y - 1)).isDoorway())) { // add left cell
-						listPoint.add(this.getCellAt(calcIndex(x, y - 1)).getIndex());
-					}
-					if (x != this.getNumRows() - 1 && (this.getCellAt(calcIndex(x + 1, y)).isWalkway() || this.getCellAt(calcIndex(x + 1, y)).isDoorway())) { // add below cell
-						listPoint.add(this.getCellAt(calcIndex(x + 1, y)).getIndex());
-					}
-					if (y != this.getNumColumns() - 1 && (this.getCellAt(calcIndex(x, y + 1)).isWalkway() || this.getCellAt(calcIndex(x, y + 1)).isDoorway())) { // add right cell
-						listPoint.add(this.getCellAt(calcIndex(x, y + 1)).getIndex());
-					}
-				} else if (this.getCellAt(index).isDoorway()) { // ***
-					if (this.getRoomCellAt(x, y).getDoorDirection() == RoomCell.DoorDirection.UP) {
-						listPoint.add(this.getCellAt(calcIndex(x - 1, y)).getIndex());
-					} else if (this.getRoomCellAt(x, y).getDoorDirection() == RoomCell.DoorDirection.DOWN) {
-						listPoint.add(this.getCellAt(calcIndex(x + 1, y)).getIndex());
-					} else if (this.getRoomCellAt(x, y).getDoorDirection() == RoomCell.DoorDirection.RIGHT) {
-						listPoint.add(this.getCellAt(calcIndex(x, y + 1)).getIndex());
-					} else if (this.getRoomCellAt(x, y).getDoorDirection() == RoomCell.DoorDirection.LEFT) {
-						listPoint.add(this.getCellAt(calcIndex(x, y - 1)).getIndex());
-					} // ***
+		for (int i = 0; i < numRows * numColumns; i++) {
+			LinkedList<Integer> cells = new LinkedList<Integer>();
+			int column = i % numColumns;
+			int row = i / numColumns;
+			BoardCell adj;
+			BoardCell cell = getCellAt(i);
 
-					/*
-					 * if (this.getCellAt(index).isRoom()) { // check to see if room, find room adjacency list char initial = this.getRoomCellAt(y,x).getInitial(); listPoint = roomAdj.get(initial);
-					 */
-				} else { // ***
-					listPoint.clear();
-				} // ***
-				map.put(index, listPoint); // add adjacency list for cell to map
+			map.put(i, cells);
+
+			// only doorways have adjacencies, and they only have one, so short-circuit
+			if (cell.isRoom()) {
+				// if a door was placed facing an edge, this would be invalid, but the board should not be set up that way
+				if (cell.isDoorway()) {
+					switch (((RoomCell) cell).getDoorDirection()) {
+					case RIGHT:
+						cells.add(i + 1);
+						break;
+					case LEFT:
+						cells.add(i - 1);
+						break;
+					case UP:
+						cells.add(i - numColumns);
+						break;
+					case DOWN:
+						cells.add(i + numColumns);
+						break;
+					}
+				}
+				continue;
+			}
+
+			if (column > 0) {
+				adj = getCellAt(i - 1);// the cell to the left
+
+				if (adj instanceof WalkwayCell || (adj.isDoorway() && ((RoomCell) adj).getDoorDirection() == DoorDirection.RIGHT)) {
+					cells.add(i - 1);
+				}
+			}
+
+			if (column < numColumns - 1) {
+				adj = getCellAt(i + 1);// the cell to the right
+
+				if (adj instanceof WalkwayCell || (adj.isDoorway() && ((RoomCell) adj).getDoorDirection() == DoorDirection.LEFT)) {
+					cells.add(i + 1);
+				}
+			}
+
+			if (row > 0) {
+				adj = getCellAt(i - numColumns);// the cell above
+
+				if (adj instanceof WalkwayCell || (adj.isDoorway() && ((RoomCell) adj).getDoorDirection() == DoorDirection.DOWN)) {
+					cells.add(i - numColumns);
+				}
+			}
+
+			if (row < numRows - 1) {
+				adj = getCellAt(i + numColumns);// the cell below
+
+				if (adj instanceof WalkwayCell || (adj.isDoorway() && ((RoomCell) adj).getDoorDirection() == DoorDirection.UP)) {
+					cells.add(i + numColumns);
+				}
 			}
 		}
-
 	}
 
 	public Board() {
