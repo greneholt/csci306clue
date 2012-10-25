@@ -201,7 +201,7 @@ public class Board {
 			if (column > 0) {
 				adj = getCellAt(i - 1);// the cell to the left
 
-				if (adj instanceof WalkwayCell || (adj.isDoorway() && ((RoomCell) adj).getDoorDirection() == DoorDirection.RIGHT)) {
+				if (adj.isWalkway() || (adj.isDoorway() && ((RoomCell) adj).getDoorDirection() == DoorDirection.RIGHT)) {
 					cells.add(i - 1);
 				}
 			}
@@ -209,7 +209,7 @@ public class Board {
 			if (column < numColumns - 1) {
 				adj = getCellAt(i + 1);// the cell to the right
 
-				if (adj instanceof WalkwayCell || (adj.isDoorway() && ((RoomCell) adj).getDoorDirection() == DoorDirection.LEFT)) {
+				if (adj.isWalkway() || (adj.isDoorway() && ((RoomCell) adj).getDoorDirection() == DoorDirection.LEFT)) {
 					cells.add(i + 1);
 				}
 			}
@@ -217,7 +217,7 @@ public class Board {
 			if (row > 0) {
 				adj = getCellAt(i - numColumns);// the cell above
 
-				if (adj instanceof WalkwayCell || (adj.isDoorway() && ((RoomCell) adj).getDoorDirection() == DoorDirection.DOWN)) {
+				if (adj.isWalkway() || (adj.isDoorway() && ((RoomCell) adj).getDoorDirection() == DoorDirection.DOWN)) {
 					cells.add(i - numColumns);
 				}
 			}
@@ -225,7 +225,7 @@ public class Board {
 			if (row < numRows - 1) {
 				adj = getCellAt(i + numColumns);// the cell below
 
-				if (adj instanceof WalkwayCell || (adj.isDoorway() && ((RoomCell) adj).getDoorDirection() == DoorDirection.UP)) {
+				if (adj.isWalkway() || (adj.isDoorway() && ((RoomCell) adj).getDoorDirection() == DoorDirection.UP)) {
 					cells.add(i + numColumns);
 				}
 			}
