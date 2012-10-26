@@ -15,6 +15,7 @@ import org.junit.runner.Computer;
 
 import clueGame.Board;
 import clueGame.ComputerPlayer;
+import clueGame.WalkwayCell;
 
 public class GameSetupTests {
 	Board brd;
@@ -39,8 +40,10 @@ public class GameSetupTests {
 		for(ComputerPlayer comp : opp){
 			assertTrue(comp.getName()/*message*/,names.containsKey(comp.getName()));
 			//assure all the computer players' names are in the list.
+			assertTrue("Not in walkway",brd.getCellAt(comp.getWhere()) instanceof WalkwayCell);
+			
 		}
-		brd.getYou();
+		
 	}
 
 }
