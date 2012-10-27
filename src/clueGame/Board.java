@@ -14,7 +14,7 @@ public class Board {
 	Set<Integer> path = new HashSet<Integer>();
 	Set<Player> players = new HashSet<Player>(); // contains all players
 	HumanPlayer human = new HumanPlayer();
-	Set<Card> cards = new HashSet<Card>();
+	Set<Card> deck = new HashSet<Card>();
 	Solution solution;
 	
 	private int numRows;
@@ -122,8 +122,8 @@ public class Board {
 		return neighbors;
 	}
 
-	public Set<Card> getCards() {
-		return cards;
+	public Set<Card> getDeck() {
+		return deck;
 	}
 
 	public BoardCell getCellAt(int i) {

@@ -23,8 +23,8 @@ public class GameSetupTests {
 	private static Board board;
 	private static Map<String,Color> names;
 	
-	@BeforeClass //TODO BeforeClass?
-	public void setUp() throws Exception {
+	@BeforeClass 
+	public static void setUp() throws Exception {
 		board = new Board();
 		board.loadConfigFiles("ClueBoardLegend.txt", "ClueBoardLayout.csv");
 		board.loadPlayers("players.txt");
@@ -32,7 +32,7 @@ public class GameSetupTests {
 		
 		names = new HashMap<String,Color>(6);
 		names.put("Colonel Mustard",Color.yellow);
-		names.put("Professor Plum",Color.decode("FF00FF"));
+		names.put("Professor Plum",new Color(0xFF00FF));
 		names.put("Miss White",Color.white);
 		names.put("Mrs. Peacock",Color.blue);
 		names.put("Mr. Green",Color.green);
@@ -55,5 +55,19 @@ public class GameSetupTests {
 		}
 		
 	}
+	
+	@Test
+	public void cardsLoaded() {
+		assertEquals(12+board.getRooms().size(), board.getDeck().size());
+		//6 people, 6 weapons, and however many rooms we have.
+		
+	}
 
+	@Test
+	public void testDeal(){
+		board.deal();
+		assertEquals(0, board.getDeck().size());
+		//now that we dealt, the deck should be empty.
+
+	}
 }

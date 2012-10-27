@@ -36,7 +36,7 @@ public class GameActionsTests {
 		Card firstPerson = null;
 		Card firstWeapon = null;
 		Card firstRoom = null;
-		for (Card card : board.getCards()) {
+		for (Card card : board.getDeck()) {
 			switch (card.getType()) {
 			case PERSON:
 				if (firstPerson == null) firstPerson = card;
