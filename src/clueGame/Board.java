@@ -40,6 +40,14 @@ public class Board {
 		loadLegend(legendFile);
 		loadBoard(boardFile);
 	}
+	
+	public void loadPlayers(String playersFile) {
+		// TODO stub
+	}
+	
+	public void loadCards(String cards) {
+		// TODO stub
+	}
 
 	private void loadBoard(String boardFile) throws BadConfigFormatException, FileNotFoundException {
 		FileReader reader = new FileReader(boardFile);

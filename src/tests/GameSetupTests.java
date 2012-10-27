@@ -18,12 +18,12 @@ import clueGame.ComputerPlayer;
 import clueGame.WalkwayCell;
 
 public class GameSetupTests {
-	Board brd;
+	Board board;
 	Map<String,Color> names;
 	@Before //TODO BeforeClass?
 	public void setUp() throws Exception {
 		names = new HashMap<String,Color>(6);
-		brd = new Board();
+		board = new Board();
 		names.put("Colonel Mustard",Color.yellow);
 		names.put("Professor Plum",Color.decode("FF00FF"));
 		names.put("Miss White",Color.white);
@@ -34,13 +34,13 @@ public class GameSetupTests {
 
 	@Test
 	public void peopleLoaded() {
-		Set<ComputerPlayer> opp = brd.getOpponents();
+		Set<ComputerPlayer> opp = board.getOpponents();
 		assertEquals(5, opp.size());
-		if(names.remove(brd.getYou().getName())==null) fail("Your name is invalid");
+		if(names.remove(board.getYou().getName())==null) fail("Your name is invalid");
 		for(ComputerPlayer comp : opp){
 			assertTrue(comp.getName()/*message*/,names.containsKey(comp.getName()));
 			//assure all the computer players' names are in the list.
-			assertTrue("Not in walkway",brd.getCellAt(comp.getWhere()) instanceof WalkwayCell);
+			assertTrue("Not in walkway",board.getCellAt(comp.getCellIndex()) instanceof WalkwayCell);
 			
 		}
 		

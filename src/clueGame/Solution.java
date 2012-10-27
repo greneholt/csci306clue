@@ -1,13 +1,13 @@
 package clueGame;
 
 public class Solution {
-	String Person;
-	String Weapon;
-	String Room;
-	public Solution(String person, String weapon, String room) {
-		Person=person;
-		Weapon=weapon;
-		Room=room;
+	Card person;
+	Card weapon;
+	Card room;
+	
+	public Solution(Card person, Card weapon, Card room) {
+		this.person = person;
+		this.weapon = weapon;
+		this.room = room;
 	}
-
 }

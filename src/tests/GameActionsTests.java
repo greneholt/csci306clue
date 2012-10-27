@@ -3,17 +3,24 @@ package tests;
 import static org.junit.Assert.*;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class GameActionsTests {
+import clueGame.Board;
 
-	@Before
-	public void setUp() throws Exception {
+public class GameActionsTests {
+	private static Board board;
+	
+	@BeforeClass
+	public static void setUp() throws Exception {
+		board = new Board();
+		board.loadConfigFiles("ClueBoardLegend.txt", "ClueBoardLayout.csv");
+		board.loadPlayers("players.txt");
+		board.loadCards("cards.txt");
 	}
 
 	@Test
-	public void test() {
-		fail("Not yet implemented");
+	public void testAccusation() {
+		Person person = board.
 	}
-
 }
