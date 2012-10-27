@@ -12,15 +12,35 @@ public class Board {
 	Map<Integer, LinkedList<Integer>> adjacencies = new HashMap<Integer, LinkedList<Integer>>();
 	Set<BoardCell> targets = new HashSet<BoardCell>();
 	Set<Integer> path = new HashSet<Integer>();
-	Set<ComputerPlayer> opponents = new HashSet<ComputerPlayer>();
-	HumanPlayer you = new HumanPlayer();
-	Set<Card> deck = new HashSet<Card>();
-	int numRows;
-	int numColumns;
-	int firstSpot;
+	Set<Player> players = new HashSet<Player>(); // contains all players
+	HumanPlayer human = new HumanPlayer();
+	Set<Card> cards = new HashSet<Card>();
+	Solution solution;
+	
+	private int numRows;
 
-	public void selectAnswer() {
+	private int numColumns;
 
+	public int calcIndex(int row, int col) {
+		int index = (row * numColumns) + col;
+		return index;
+	}
+	
+	private void calcTargets(int calcIndex, int steps) {
+		for (Integer neighbor : getAdjList(calcIndex)) {
+			if (path.contains(neighbor))
+				continue;
+
+			path.add(neighbor);
+
+			// we include the initial cell in the path, so the path size has to exceed steps by one
+			if (path.size() > steps || getCellAt(neighbor).isDoorway()) {
+				targets.add(getCellAt(neighbor));
+			} else {
+				calcTargets(neighbor, steps);
+			}
+			path.remove(neighbor);
+		}
 	}
 
 	public void deal() {
@@ -29,112 +49,6 @@ public class Board {
 
 	public void deal(ArrayList<String> cardlist) {
 
-	}
-
-	public boolean handleSuggestion(String person, String weapon, String room, boolean accuse) {
-		// I don't see the need to have two separate functions for suggestions and accusation.
-		return false;
-	}
-
-	public void loadConfigFiles(String legendFile, String boardFile) throws BadConfigFormatException, FileNotFoundException {
-		loadLegend(legendFile);
-		loadBoard(boardFile);
-	}
-	
-	public void loadPlayers(String playersFile) {
-		// TODO stub
-	}
-	
-	public void loadCards(String cards) {
-		// TODO stub
-	}
-
-	private void loadBoard(String boardFile) throws BadConfigFormatException, FileNotFoundException {
-		FileReader reader = new FileReader(boardFile);
-		Scanner scan = new Scanner(reader);
-		// populate cell list
-		int j = 0;
-		while (scan.hasNext()) {
-			String wholeString = scan.nextLine();
-			if (!wholeString.contains(",")) {
-				throw new BadConfigFormatException();
-			}
-			String[] strArr = wholeString.split(",");
-			for (int i = 0; i < strArr.length; i++) {
-				String str = strArr[i];
-				if (str.equalsIgnoreCase("W")) {
-					WalkwayCell wc = new WalkwayCell();
-					wc.setCol(i);
-					wc.setRow(j);
-					wc.setBoardWidth(strArr.length);
-					cells.add(wc);
-				} else {
-					RoomCell rc = new RoomCell();
-					if (str.length() == 2) {
-						char d = str.charAt(1);
-						rc.setDoorDirection(d);
-					}
-					rc.setCol(i);
-					rc.setRow(j);
-					rc.setBoardWidth(strArr.length);
-					rc.setRoom(str.charAt(0));
-					cells.add(rc);
-				}
-			}
-			numColumns = strArr.length;
-			++j;
-		}
-		numRows = j;
-	}
-
-	private void loadLegend(String legendFile) throws BadConfigFormatException, FileNotFoundException {
-		FileReader reader = new FileReader(legendFile);
-		Scanner scan = new Scanner(reader);
-		// populate legend map
-		while (scan.hasNext()) {
-			String wholeString = scan.nextLine();
-			if (!wholeString.contains(", ")) {
-				throw new BadConfigFormatException();
-			}
-			String[] stringArr = wholeString.split(", ");
-			String character = stringArr[0];
-			String room = stringArr[1];
-			char c = character.charAt(0);
-			rooms.put(c, room);
-		}
-	}
-
-	public int calcIndex(int row, int col) {
-		int index = (row * numColumns) + col;
-		return index;
-	}
-
-	public RoomCell getRoomCellAt(int row, int col) {
-		if (cells.get(this.calcIndex(row, col)).isRoom()) {
-			return (RoomCell) cells.get(this.calcIndex(row, col));
-		} else {
-			return null;
-		}
-	}
-
-	public ArrayList<BoardCell> getCells() {
-		return cells;
-	}
-
-	public Map<Character, String> getRooms() {
-		return rooms;
-	}
-
-	public int getNumRows() {
-		return numRows;
-	}
-
-	public int getNumColumns() {
-		return numColumns;
-	}
-
-	public BoardCell getCellAt(int i) {
-		return cells.get(i);
 	}
 
 	public LinkedList<Integer> getAdjList(int i) {
@@ -208,6 +122,50 @@ public class Board {
 		return neighbors;
 	}
 
+	public Set<Card> getCards() {
+		return cards;
+	}
+
+	public BoardCell getCellAt(int i) {
+		return cells.get(i);
+	}
+
+	public ArrayList<BoardCell> getCells() {
+		return cells;
+	}
+
+	public HumanPlayer getHuman() {
+		return human;
+	}
+	
+	public int getNumColumns() {
+		return numColumns;
+	}
+
+	public int getNumRows() {
+		return numRows;
+	}
+	
+	public Set<Player> getPlayers() {
+		return players;
+	}
+	
+	public RoomCell getRoomCellAt(int row, int col) {
+		if (cells.get(this.calcIndex(row, col)).isRoom()) {
+			return (RoomCell) cells.get(this.calcIndex(row, col));
+		} else {
+			return null;
+		}
+	}
+
+	public Map<Character, String> getRooms() {
+		return rooms;
+	}
+
+	public Solution getSolution() {
+		return solution;
+	}
+
 	public Set<BoardCell> getTargets(int i, int steps) {
 		targets = new HashSet<BoardCell>();
 		path.clear();
@@ -216,37 +174,87 @@ public class Board {
 		return targets;
 	}
 
-	private void calcTargets(int calcIndex, int steps) {
-		for (Integer neighbor : getAdjList(calcIndex)) {
-			if (path.contains(neighbor))
-				continue;
+	public boolean handleAccusation(Card person, Card weapon, Card room) {
+		return false;
+	}
 
-			path.add(neighbor);
+	public boolean handleSuggestion(Card person, Card weapon, Card room) {
+		return false;
+	}
 
-			// we include the initial cell in the path, so the path size has to exceed steps by one
-			if (path.size() > steps || getCellAt(neighbor).isDoorway()) {
-				targets.add(getCellAt(neighbor));
-			} else {
-				calcTargets(neighbor, steps);
+	private void loadBoard(String boardFile) throws BadConfigFormatException, FileNotFoundException {
+		FileReader reader = new FileReader(boardFile);
+		Scanner scan = new Scanner(reader);
+		// populate cell list
+		int j = 0;
+		while (scan.hasNext()) {
+			String wholeString = scan.nextLine();
+			if (!wholeString.contains(",")) {
+				throw new BadConfigFormatException();
 			}
-			path.remove(neighbor);
+			String[] strArr = wholeString.split(",");
+			for (int i = 0; i < strArr.length; i++) {
+				String str = strArr[i];
+				if (str.equalsIgnoreCase("W")) {
+					WalkwayCell wc = new WalkwayCell();
+					wc.setCol(i);
+					wc.setRow(j);
+					wc.setBoardWidth(strArr.length);
+					cells.add(wc);
+				} else {
+					RoomCell rc = new RoomCell();
+					if (str.length() == 2) {
+						char d = str.charAt(1);
+						rc.setDoorDirection(d);
+					}
+					rc.setCol(i);
+					rc.setRow(j);
+					rc.setBoardWidth(strArr.length);
+					rc.setRoom(str.charAt(0));
+					cells.add(rc);
+				}
+			}
+			numColumns = strArr.length;
+			++j;
+		}
+		numRows = j;
+	}
+
+	public void loadCards(String cards) {
+		// TODO stub
+	}
+
+	public void loadConfigFiles(String legendFile, String boardFile) throws BadConfigFormatException, FileNotFoundException {
+		loadLegend(legendFile);
+		loadBoard(boardFile);
+	}
+
+	private void loadLegend(String legendFile) throws BadConfigFormatException, FileNotFoundException {
+		FileReader reader = new FileReader(legendFile);
+		Scanner scan = new Scanner(reader);
+		// populate legend map
+		while (scan.hasNext()) {
+			String wholeString = scan.nextLine();
+			if (!wholeString.contains(", ")) {
+				throw new BadConfigFormatException();
+			}
+			String[] stringArr = wholeString.split(", ");
+			String character = stringArr[0];
+			String room = stringArr[1];
+			char c = character.charAt(0);
+			rooms.put(c, room);
 		}
 	}
 
-	public Set<ComputerPlayer> getOpponents() {
-		return opponents;
+	public void loadPlayers(String playersFile) {
+		// TODO stub
 	}
 
-	public HumanPlayer getYou() {
-		return you;
+	public void selectAnswer() {
+
 	}
 
-	public Set<Card> getDeck() {
-		return deck;
+	public void setSolution(Solution solution) {
+		this.solution = solution;
 	}
-
-	public int getFirstSpot() {
-		return firstSpot;
-	}
-
 }

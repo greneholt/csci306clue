@@ -7,6 +7,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import clueGame.Board;
+import clueGame.Card;
+import clueGame.Solution;
 
 public class GameActionsTests {
 	private static Board board;
@@ -21,6 +23,30 @@ public class GameActionsTests {
 
 	@Test
 	public void testAccusation() {
-		Person person = board.
+		Card person = null;
+		Card weapon = null;
+		Card room = null;
+		for (Card card : board.getCards()) {
+			switch (card.getType()) {
+			case PERSON:
+				person = card;
+				break;
+			case WEAPON:
+				weapon = card;
+				break;
+			case ROOM:
+				room = card;
+				break;
+			}
+		}
+		
+		assertNotNull(person);
+		assertNotNull(weapon);
+		assertNotNull(room);
+		
+		Solution solution = new Solution(person, weapon, room);
+		board.setSolution(solution);
+		
+		
 	}
 }

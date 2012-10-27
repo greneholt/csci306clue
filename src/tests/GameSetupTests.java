@@ -15,6 +15,7 @@ import org.junit.runner.Computer;
 
 import clueGame.Board;
 import clueGame.ComputerPlayer;
+import clueGame.Player;
 import clueGame.WalkwayCell;
 
 public class GameSetupTests {
@@ -34,10 +35,10 @@ public class GameSetupTests {
 
 	@Test
 	public void peopleLoaded() {
-		Set<ComputerPlayer> opp = board.getOpponents();
+		Set<Player> opp = board.getPlayers();
 		assertEquals(5, opp.size());
-		if(names.remove(board.getYou().getName())==null) fail("Your name is invalid");
-		for(ComputerPlayer comp : opp){
+		if(names.remove(board.getHuman().getName())==null) fail("Your name is invalid");
+		for(Player comp : opp){
 			assertTrue(comp.getName()/*message*/,names.containsKey(comp.getName()));
 			//assure all the computer players' names are in the list.
 			assertTrue("Not in walkway",board.getCellAt(comp.getCellIndex()) instanceof WalkwayCell);

@@ -8,6 +8,14 @@ public class Card {
 		// TODO Auto-generated constructor stub
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public CardType getType() {
+		return type;
+	}
+
 	public enum CardType {
 		ROOM, WEAPON, PERSON
 	}
