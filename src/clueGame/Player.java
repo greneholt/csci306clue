@@ -7,26 +7,39 @@ import java.util.Set;
 public class Player {
 	private String name;
 	private Color pieceColor;
-	private int cellIndex; // the index of the cell the player is at.
+	private int cellIndex;
 	private Set<Card> cards = new HashSet<Card>();
 
 	public Player() {
 		// TODO Auto-generated constructor stub
 	}
 
+	public int getCellIndex() {
+		return cellIndex;
+	}
+	
 	public String getName() {
 		return name;
 	}
 
-	/**
-	 * @return the pieceColor
-	 */
 	public Color getPieceColor() {
 		return pieceColor;
 	}
 
-	public int getCellIndex() {
-		return cellIndex;
+	public void setCellIndex(int cellIndex) {
+		this.cellIndex = cellIndex;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setPieceColor(Color pieceColor) {
+		this.pieceColor = pieceColor;
+	}
+
+	public void setCards(Set<Card> cards) {
+		this.cards = cards;
 	}
 
 	public Set<Card> getCards() {

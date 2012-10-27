@@ -129,6 +129,10 @@ public class Board {
 	public BoardCell getCellAt(int i) {
 		return cells.get(i);
 	}
+	
+	public BoardCell getCellAt(int row, int col) {
+		return cells.get(calcIndex(row, col));
+	}
 
 	public ArrayList<BoardCell> getCells() {
 		return cells;
