@@ -20,4 +20,12 @@ public class ComputerPlayer extends Player {
 
 	public void markSeen(Card seen) {
 	}
+
+	public char getLastRoomVisited() {
+		return lastRoomVisited;
+	}
+
+	public void setLastRoomVisited(char lastRoomVisited) {
+		this.lastRoomVisited = lastRoomVisited;
+	}
 }

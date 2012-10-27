@@ -77,7 +77,36 @@ public class GameActionsTests {
 		
 		// move them to the top left corner, where no rooms are accessible
 		computer.setCellIndex(board.calcIndex(0, 0));
-		Set<BoardCell> targets = board.getTargets(computer.getCellIndex(), 5);
+		checkRandomRoomTarget(computer, 5);
+	}
+
+	@Test
+	public void testComputerSelectRoomTarget() {
+		ComputerPlayer computer = new ComputerPlayer();
+		
+		// move them to the top left corner, where no rooms are accessible
+		computer.setCellIndex(board.calcIndex(5, 7));
+		Set<BoardCell> targets = board.getTargets(computer.getCellIndex(), 3);
+		
+		// test that it picks the door every time
+		for (int i = 0; i < 100; i++) {
+			BoardCell target = computer.pickLocation(targets);
+			assertEquals("Target door", board.calcIndex(4, 8), target.getIndex());
+		}
+	}
+	
+	@Test
+	public void testComputerSelectRoomRandomTarget() {
+		ComputerPlayer computer = new ComputerPlayer();
+		
+		// move them to the top left corner, where no rooms are accessible
+		computer.setCellIndex(board.calcIndex(5, 7));
+		computer.setLastRoomVisited('R'); // if the room was the last one entered, 
+		checkRandomRoomTarget(computer, 3);
+	}
+
+	private void checkRandomRoomTarget(ComputerPlayer computer, int steps) {
+		Set<BoardCell> targets = board.getTargets(computer.getCellIndex(), steps);
 		Map<BoardCell, Integer> choiceCounts = new HashMap<BoardCell, Integer>();
 		
 		// choose a cell 100 times, and then ensure each cell is chosen at least once
@@ -100,20 +129,5 @@ public class GameActionsTests {
 			}
 		}
 		assertEquals(100, totalChoices);
-	}
-	
-	@Test
-	public void testComputerSelectRoomTarget() {
-		ComputerPlayer computer = new ComputerPlayer();
-		
-		// move them to the top left corner, where no rooms are accessible
-		computer.setCellIndex(board.calcIndex(5, 7));
-		Set<BoardCell> targets = board.getTargets(computer.getCellIndex(), 3);
-		
-		// test that it picks the door every time
-		for (int i = 0; i < 100; i++) {
-			BoardCell target = computer.pickLocation(targets);
-			assertEquals("Target door", board.calcIndex(4, 8), target.getIndex());
-		}
 	}
 }
