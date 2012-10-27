@@ -12,7 +12,7 @@ import clueGame.Solution;
 
 public class GameActionsTests {
 	private static Board board;
-	
+
 	@BeforeClass
 	public static void setUp() throws Exception {
 		board = new Board();
@@ -23,30 +23,49 @@ public class GameActionsTests {
 
 	@Test
 	public void testAccusation() {
-		Card person = null;
-		Card weapon = null;
-		Card room = null;
+		Card lastPerson = null;
+		Card lastWeapon = null;
+		Card lastRoom = null;
+		Card firstPerson = null;
+		Card firstWeapon = null;
+		Card firstRoom = null;
 		for (Card card : board.getCards()) {
 			switch (card.getType()) {
 			case PERSON:
-				person = card;
+				if (firstPerson == null) firstPerson = card;
+				lastPerson = card;
 				break;
 			case WEAPON:
-				weapon = card;
+				if (firstWeapon == null) firstWeapon = card;
+				lastWeapon = card;
 				break;
 			case ROOM:
-				room = card;
+				if (firstRoom == null) firstRoom = card;
+				lastRoom = card;
 				break;
 			}
 		}
-		
-		assertNotNull(person);
-		assertNotNull(weapon);
-		assertNotNull(room);
-		
-		Solution solution = new Solution(person, weapon, room);
+
+		assertNotNull(lastPerson);
+		assertNotNull(lastWeapon);
+		assertNotNull(lastRoom);
+
+		assertNotNull(firstPerson);
+		assertNotNull(firstWeapon);
+		assertNotNull(firstRoom);
+
+		Solution solution = new Solution(lastPerson, lastWeapon, lastRoom);
 		board.setSolution(solution);
-		
-		
+
+		assertTrue("All correct", board.checkAccusation(lastPerson, lastWeapon, lastRoom));
+		assertFalse("Wrong room", board.checkAccusation(lastPerson, lastWeapon, firstRoom));
+		assertFalse("Wrong weapon", board.checkAccusation(lastPerson, firstWeapon, lastRoom));
+		assertFalse("Wrong person", board.checkAccusation(firstPerson, lastWeapon, lastRoom));
+		assertFalse("All wrong", board.checkAccusation(firstPerson, firstWeapon, firstRoom));
+	}
+
+	@Test
+	public void testComputerSelectTarget() {
+
 	}
 }

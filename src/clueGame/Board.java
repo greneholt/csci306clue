@@ -174,7 +174,7 @@ public class Board {
 		return targets;
 	}
 
-	public boolean handleAccusation(Card person, Card weapon, Card room) {
+	public boolean checkAccusation(Card person, Card weapon, Card room) {
 		return false;
 	}
 
