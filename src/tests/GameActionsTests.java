@@ -148,7 +148,7 @@ public class GameActionsTests {
 	}
 	
 	@Test
-	public void testDisproveSuggestionAllPlayers() {
+	public void testDisproveSuggestionTwoPlayers() {
 		// TODO
 	}
 }
