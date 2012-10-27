@@ -147,12 +147,12 @@ public class GameActionsTests {
 		computer.giveCard(scarlet);
 		computer.giveCard(mustard);
 		computer.giveCard(ballroom);
-		
+
 		// test when only one could be returned
 		Card hasCard = computer.disproveSuggestion(scarlet, pipe, conservatory);
 		assertNotNull(hasCard);
 		assertEquals(scarlet, hasCard);
-		
+
 		// test when multiple cards could be given
 		Set<Card> options = new HashSet<Card>();
 		options.add(scarlet);
@@ -180,7 +180,7 @@ public class GameActionsTests {
 		}
 		assertEquals(100, totalChoices);
 	}
-	
+
 	@Test
 	public void testDisproveSuggestionTwoPlayers() {
 		ComputerPlayer jim=new ComputerPlayer();
@@ -218,7 +218,7 @@ public class GameActionsTests {
 		assertEquals(100, totalChoices);
 
 	}
-	
+
 	@Test
 	public void testDontDisproveMyself() {
 		ComputerPlayer Jorge = new ComputerPlayer();
@@ -229,6 +229,23 @@ public class GameActionsTests {
 		board.getPlayers().add(Jorge);
 		for (int i = 0; i < 100; i++) {
 			assertFalse(board.handleSuggestion(scarlet, confetti, ballroom));
+			//make sure that, even after 100 times, a player does not "show themself" a card.
+		}
+	}
+
+	@Test
+	public void computerSuggestion(){
+		ComputerPlayer Dumbo = new ComputerPlayer();
+		Dumbo.giveCard(mustard);
+		Dumbo.markSeen(ballroom);
+		Dumbo.markSeen(scarlet);
+		Dumbo.markSeen(pipe);
+		for(int i =0; i<100;i++){
+			Set<Card> DumbSeen = Dumbo.createSuggestion();
+			assertFalse(DumbSeen.contains(mustard));
+			assertFalse(DumbSeen.contains(ballroom));
+			assertFalse(DumbSeen.contains(scarlet));
+			assertFalse(DumbSeen.contains(pipe));
 		}
 	}
 }

@@ -15,7 +15,8 @@ public class ComputerPlayer extends Player {
 		return new WalkwayCell();
 	}
 
-	public void createSuggestion() {
+	public Set<Card> createSuggestion() {
+		return seenCards;//TODO fix this to make tests pass
 	}
 
 	public void markSeen(Card seen) {
