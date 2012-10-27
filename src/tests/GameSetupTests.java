@@ -90,6 +90,7 @@ public class GameSetupTests {
 
 	@Test
 	public void testDeal(){
+		if(board.getDeck().isEmpty()) fail("we should have cards right now");
 		board.deal();
 		assertEquals(0, board.getDeck().size());
 		//now that we dealt, the deck should be empty.

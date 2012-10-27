@@ -15,6 +15,7 @@ import clueGame.Board;
 import clueGame.BoardCell;
 import clueGame.Card;
 import clueGame.ComputerPlayer;
+import clueGame.HumanPlayer;
 import clueGame.Player;
 import clueGame.Solution;
 
@@ -123,7 +124,7 @@ public class GameActionsTests {
 			BoardCell target = computer.pickLocation(targets);
 			assertTrue("Invalid target", targets.contains(target));
 
-			int count = 0;
+			int count = 1;
 			if (choiceCounts.containsKey(target)) {
 				count += choiceCounts.get(target);
 			}
@@ -163,7 +164,7 @@ public class GameActionsTests {
 			Card card = computer.disproveSuggestion(scarlet, confetti, ballroom);
 			assertTrue("Invalid card", options.contains(card));
 
-			int count = 0;
+			int count = 1;
 			if (choiceCounts.containsKey(card)) {
 				count += choiceCounts.get(card);
 			}
@@ -182,6 +183,52 @@ public class GameActionsTests {
 	
 	@Test
 	public void testDisproveSuggestionTwoPlayers() {
-		// TODO
+		ComputerPlayer jim=new ComputerPlayer();
+		jim.giveCard(conservatory);
+		ComputerPlayer bob = new ComputerPlayer();
+		bob.giveCard(mustard);
+		board.getPlayers().add(jim);
+		board.getPlayers().add(bob);
+
+		Set<Card> options = new HashSet<Card>();
+		options.add(conservatory);
+		options.add(mustard);
+		Map<Card, Integer> choiceCounts = new HashMap<Card, Integer>();
+
+		// disprove 100 times, and then ensure each option is given at least once
+		for (int i = 0; i < 100; i++) {
+			board.handleSuggestion(mustard, pipe, conservatory);
+			Card card = board.getLastshown();
+			assertTrue("Invalid card", options.contains(card));
+
+			int count = 1;
+			if (choiceCounts.containsKey(card)) {
+				count += choiceCounts.get(card);
+			}
+			choiceCounts.put(card, count);
+		}
+
+		int totalChoices = 0;
+		for (int count : choiceCounts.values()) {
+			totalChoices += count;
+			if (count == 0) {
+				fail("Card choice not random");
+			}
+		}
+		assertEquals(100, totalChoices);
+
+	}
+	
+	@Test
+	public void testDontDisproveMyself() {
+		ComputerPlayer Jorge = new ComputerPlayer();
+		Jorge.giveCard(scarlet);
+		Jorge.giveCard(ballroom);
+		board.getPlayers().clear();
+		//make sure someone doesn't randomly have one of those cards
+		board.getPlayers().add(Jorge);
+		for (int i = 0; i < 100; i++) {
+			assertFalse(board.handleSuggestion(scarlet, confetti, ballroom));
+		}
 	}
 }

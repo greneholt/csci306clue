@@ -16,6 +16,7 @@ public class Board {
 	HumanPlayer human = new HumanPlayer();
 	Set<Card> deck = new HashSet<Card>();
 	Solution solution;
+	Card lastshown;
 	
 	private int numRows;
 
@@ -182,8 +183,16 @@ public class Board {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param person
+	 * @param weapon
+	 * @param room
+	 * @return false if no card is shown
+	 */
 	public boolean handleSuggestion(Card person, Card weapon, Card room) {
 		return false;
+		//lastshown = randomperson.disproveSuggestion(...);
 	}
 
 	private void loadBoard(String boardFile) throws BadConfigFormatException, FileNotFoundException {
@@ -253,6 +262,10 @@ public class Board {
 	public void loadPlayers(String playersFile) {
 		// TODO stub
 	}
+	
+	public void clearPlayers(){
+		players.clear();
+	}
 
 	public void selectAnswer() {
 
@@ -260,5 +273,9 @@ public class Board {
 
 	public void setSolution(Solution solution) {
 		this.solution = solution;
+	}
+
+	public Card getLastshown() {
+		return lastshown;
 	}
 }
