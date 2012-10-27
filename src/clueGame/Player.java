@@ -46,4 +46,11 @@ public class Player {
 		return cards;
 	}
 
+	public void giveCard(Card card) {
+		// TODO adds a card to the card list
+	}
+	
+	public Card disproveSuggestion(Card person, Card weapon, Card room) {
+		return null;
+	}
 }
