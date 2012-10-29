@@ -1,5 +1,6 @@
 package clueGame;
 
+import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
@@ -259,8 +260,25 @@ public class Board {
 		}
 	}
 
-	public void loadPlayers(String playersFile) {
-		// TODO stub
+	public void loadPlayers(String playersFile) throws FileNotFoundException,BadConfigFormatException{
+		clearPlayers();
+		FileReader filereadomatic = new FileReader(playersFile);
+		Scanner scn = new Scanner(filereadomatic);
+		String[] line = scn.nextLine().split(",");
+		if(line.length != 2)throw new BadConfigFormatException("Too many commas in file: "+playersFile+".");
+		HumanPlayer dude = new HumanPlayer();
+		dude.setName(line[0]);//TODO should we do it this way or with constructor?
+		dude.setPieceColor(Color.decode(line[1]));
+		human = dude;
+		players.add(dude);
+		while(scn.hasNextLine()){
+			line = scn.nextLine().split(",");
+			if(line.length != 2)throw new BadConfigFormatException("Too many commas in file: "+playersFile+".");
+			ComputerPlayer droid = new ComputerPlayer();
+			droid.setName(line[0]);
+			droid.setPieceColor(Color.decode(line[1]));
+			players.add(droid);
+		}
 	}
 	
 	public void clearPlayers(){
