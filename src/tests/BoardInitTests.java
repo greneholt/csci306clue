@@ -25,7 +25,7 @@ public class BoardInitTests {
 	@BeforeClass
 	public static void setup() throws FileNotFoundException, BadConfigFormatException {
 		board = new Board();
-		board.loadConfigFiles("ClueBoardLegend.txt", "ClueBoardLayout.csv");
+		board.loadConfigFiles("ClueBoardLegend.txt", "ClueBoardLayout.csv", "weapons.txt", "players.txt");
 	}
 	
 	@Test

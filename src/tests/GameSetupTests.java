@@ -29,10 +29,7 @@ public class GameSetupTests {
 	@BeforeClass 
 	public static void setUp() throws Exception {
 		board = new Board();
-		board.loadConfigFiles("ClueBoardLegend.txt", "ClueBoardLayout.csv");
-		board.loadPlayers("players.txt");
-		board.loadCards("cards.txt");
-
+		board.loadConfigFiles("ClueBoardLegend.txt", "ClueBoardLayout.csv","weapons.txt","players.txt");
 		names = new HashMap<String,Color>(6);
 		names.put("Colonel Mustard",Color.yellow);
 		names.put("Professor Plum",new Color(0xFF00FF));
@@ -85,7 +82,7 @@ public class GameSetupTests {
 		assertEquals(board.getRooms().size(), room);
 		assertTrue(board.getDeck().contains(new Card("Kitchen", CardType.ROOM)));
 		assertTrue(board.getDeck().contains(new Card("Revolver", CardType.WEAPON)));
-		assertTrue(board.getDeck().contains(new Card("Coronel Mustard", CardType.PERSON)));
+		assertTrue(board.getDeck().contains(new Card("Colonel Mustard", CardType.PERSON)));
 	}
 
 	@Test

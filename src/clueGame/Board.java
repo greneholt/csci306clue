@@ -5,19 +5,23 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.*;
 
+import clueGame.Card.CardType;
 import clueGame.RoomCell.DoorDirection;
 
 public class Board {
-	ArrayList<BoardCell> cells = new ArrayList<BoardCell>();
-	Map<Character, String> rooms = new TreeMap<Character, String>();
-	Map<Integer, LinkedList<Integer>> adjacencies = new HashMap<Integer, LinkedList<Integer>>();
-	Set<BoardCell> targets = new HashSet<BoardCell>();
-	Set<Integer> path = new HashSet<Integer>();
-	Set<Player> players = new HashSet<Player>(); // contains all players
-	HumanPlayer human = new HumanPlayer();
-	Set<Card> deck = new HashSet<Card>();
-	Solution solution;
-	Card lastshown;
+	private ArrayList<BoardCell> cells = new ArrayList<BoardCell>();
+	private Map<Character, String> rooms = new TreeMap<Character, String>();
+	private Map<Integer, LinkedList<Integer>> adjacencies = new HashMap<Integer, LinkedList<Integer>>();
+	private Set<BoardCell> targets = new HashSet<BoardCell>();
+	private Set<Integer> path = new HashSet<Integer>();
+	private Set<Player> players = new HashSet<Player>(); // contains all players
+	private HumanPlayer human = new HumanPlayer();
+	private Set<Card> deck = new TreeSet<Card>();
+	private Solution solution;
+	private Card lastshown;
+	private final int[] STARTpositions = {
+			3,4,5,26,37,78
+	};
 	
 	private int numRows;
 
@@ -234,13 +238,25 @@ public class Board {
 		numRows = j;
 	}
 
-	public void loadCards(String cards) {
-		// TODO stub
+	public void loadCards(String cardsfile) throws FileNotFoundException {
+		FileReader filereadomatic = new FileReader(cardsfile);
+		Scanner scn = new Scanner(filereadomatic);
+		while(scn.hasNextLine()){
+			deck.add(new Card(scn.nextLine(),CardType.WEAPON));
+		}
+		for(String room : rooms.values()){
+			deck.add(new Card(room,CardType.ROOM));
+		}
+		for(Player person : players){
+			deck.add(new Card(person.getName(),CardType.PERSON));
+		}				
 	}
 
-	public void loadConfigFiles(String legendFile, String boardFile) throws BadConfigFormatException, FileNotFoundException {
+	public void loadConfigFiles(String legendFile, String boardFile, String cardFile, String playersFile) throws BadConfigFormatException, FileNotFoundException {
 		loadLegend(legendFile);
 		loadBoard(boardFile);
+		loadPlayers(playersFile);
+		loadCards(cardFile);
 	}
 
 	private void loadLegend(String legendFile) throws BadConfigFormatException, FileNotFoundException {
@@ -265,18 +281,20 @@ public class Board {
 		FileReader filereadomatic = new FileReader(playersFile);
 		Scanner scn = new Scanner(filereadomatic);
 		String[] line = scn.nextLine().split(",");
-		if(line.length != 2)throw new BadConfigFormatException("Too many commas in file: "+playersFile+".");
+		if(line.length != 3)throw new BadConfigFormatException("Wrong number of data in first line of file: "+playersFile+".");
 		HumanPlayer dude = new HumanPlayer();
-		dude.setName(line[0]);//TODO should we do it this way or with constructor?
+		dude.setName(line[0]);
 		dude.setPieceColor(Color.decode(line[1]));
+		dude.setCellIndex(Integer.parseInt(line[2]));
 		human = dude;
 		players.add(dude);
 		while(scn.hasNextLine()){
 			line = scn.nextLine().split(",");
-			if(line.length != 2)throw new BadConfigFormatException("Too many commas in file: "+playersFile+".");
+			if(line.length != 3)throw new BadConfigFormatException("Wrong number of data in line "+" of file: "+playersFile+".");
 			ComputerPlayer droid = new ComputerPlayer();
 			droid.setName(line[0]);
 			droid.setPieceColor(Color.decode(line[1]));
+			droid.setCellIndex(Integer.parseInt(line[2]));
 			players.add(droid);
 		}
 	}

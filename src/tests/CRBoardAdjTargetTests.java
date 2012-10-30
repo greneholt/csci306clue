@@ -18,7 +18,7 @@ public class CRBoardAdjTargetTests {
 	@BeforeClass
 	public static void setUp() throws FileNotFoundException, BadConfigFormatException {
 		board = new Board();
-		board.loadConfigFiles("CR-ClueLegend.txt", "CR-ClueLayout.csv");
+		board.loadConfigFiles("CR-ClueLegend.txt", "CR-ClueLayout.csv", "weapons.txt", "players.txt");
 	}
 
 	// Ensure that player does not move around within room

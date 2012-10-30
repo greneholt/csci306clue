@@ -31,9 +31,7 @@ public class GameActionsTests {
 	@BeforeClass
 	public static void setUp() throws Exception {
 		board = new Board();
-		board.loadConfigFiles("ClueBoardLegend.txt", "ClueBoardLayout.csv");
-		board.loadPlayers("players.txt");
-		board.loadCards("cards.txt");
+		board.loadConfigFiles("ClueBoardLegend.txt", "ClueBoardLayout.csv", "weapons.txt", "players.txt");
 	}
 
 	@Test
