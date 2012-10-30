@@ -47,7 +47,7 @@ public class Player {
 	}
 
 	public void giveCard(Card card) {
-		// TODO adds a card to the card list
+		cards.add(card);
 	}
 	
 	public Card disproveSuggestion(Card person, Card weapon, Card room) {

@@ -182,7 +182,6 @@ public class GameActionsTests {
 			}
 		}
 		assertEquals(100, totalChoices);
-
 	}
 
 	@Test
@@ -200,7 +199,7 @@ public class GameActionsTests {
 	}
 
 	@Test
-	public void computerSuggestion(){
+	public void testComputerSuggestion(){
 		ComputerPlayer Dumbo = new ComputerPlayer();
 		Dumbo.giveCard(mustard);
 		Dumbo.markSeen(ballroom);

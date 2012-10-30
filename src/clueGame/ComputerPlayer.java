@@ -28,6 +28,9 @@ public class ComputerPlayer extends Player {
 	}
 
 	public Set<Card> createSuggestion() {
+		
+		
+		
 		return seenCards;//TODO fix this to make tests pass
 	}
 

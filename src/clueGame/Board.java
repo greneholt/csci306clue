@@ -17,7 +17,7 @@ public class Board {
 	private Set<Integer> path = new HashSet<Integer>();
 	private List<Player> players = new ArrayList<Player>(); // contains all players
 	private HumanPlayer human;
-	private List<Card> deck = new LinkedList<Card>();
+	private List<Card> cards = new LinkedList<Card>();
 	private Solution solution;
 	private Card lastshown;
 
@@ -50,10 +50,10 @@ public class Board {
 	public void deal() {
 		if (players.size() == 0) return;
 		
+		List<Card> deck = new LinkedList<Card>(cards); // duplicate the cards list for dealing
 		Collections.shuffle(deck);
 		
 		int i = 0;
-		
 		while (deck.size() > 0) {
 			Card card = deck.remove(0); // the deck is shuffled, so just remove the first card
 			
@@ -134,8 +134,8 @@ public class Board {
 		return neighbors;
 	}
 
-	public List<Card> getDeck() {
-		return deck;
+	public List<Card> getCards() {
+		return cards;
 	}
 
 	public BoardCell getCellAt(int i) {
@@ -256,7 +256,7 @@ public class Board {
 		Scanner scan = new Scanner(reader);
 
 		while (scan.hasNextLine()) {
-			deck.add(new Card(scan.nextLine(), CardType.WEAPON));
+			cards.add(new Card(scan.nextLine(), CardType.WEAPON));
 		}
 
 		scan.close();
@@ -290,7 +290,7 @@ public class Board {
 		reader.close();
 
 		for (String room : rooms.values()) {
-			deck.add(new Card(room, CardType.ROOM));
+			cards.add(new Card(room, CardType.ROOM));
 		}
 	}
 
@@ -311,7 +311,7 @@ public class Board {
 		reader.close();
 
 		for (Player person : players) {
-			deck.add(new Card(person.getName(), CardType.PERSON));
+			cards.add(new Card(person.getName(), CardType.PERSON));
 		}
 	}
 

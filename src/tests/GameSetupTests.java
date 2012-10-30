@@ -51,17 +51,15 @@ public class GameSetupTests {
 			assertTrue(p.getName()/* message */, names.containsKey(p.getName()));
 			// assure all the players' names are in the list.
 			assertTrue("Not in walkway", board.getCellAt(p.getCellIndex()) instanceof WalkwayCell);
-
 		}
-
 	}
 
 	@Test
 	public void cardsLoaded() {
-		assertEquals(12 + board.getRooms().size(), board.getDeck().size());
+		assertEquals(12 + board.getRooms().size(), board.getCards().size());
 		// 6 people, 6 weapons, and however many rooms we have.
 		int room = 0, pers = 0, weap = 0;
-		for (Card c : board.getDeck()) {
+		for (Card c : board.getCards()) {
 			switch (c.getType()) {
 			case PERSON:
 				pers++;
@@ -80,31 +78,31 @@ public class GameSetupTests {
 		assertEquals(6, pers);
 		assertEquals(6, weap);
 		assertEquals(board.getRooms().size(), room);
-		assertTrue(board.getDeck().contains(new Card("Kitchen", CardType.ROOM)));
-		assertTrue(board.getDeck().contains(new Card("Revolver", CardType.WEAPON)));
-		assertTrue(board.getDeck().contains(new Card("Colonel Mustard", CardType.PERSON)));
+		assertTrue(board.getCards().contains(new Card("Kitchen", CardType.ROOM)));
+		assertTrue(board.getCards().contains(new Card("Revolver", CardType.WEAPON)));
+		assertTrue(board.getCards().contains(new Card("Colonel Mustard", CardType.PERSON)));
 	}
 
 	@Test
 	public void testDeal() {
-		if (board.getDeck().isEmpty())
+		if (board.getCards().isEmpty())
 			fail("we should have cards right now");
+		
 		board.deal();
-		assertEquals(0, board.getDeck().size());
+		
+		Set<Card> deck = new HashSet<Card>(board.getCards());
+		
 		// now that we dealt, the deck should be empty.
 		int normalNum = board.getHuman().getCards().size();
 		// assume the human has the "normal" number of cards.
 		for (Player me : board.getPlayers()) {
+			assertTrue("Has cards", me.getCards().size() > 0);
 			assertTrue("Invalid number of cards", Math.abs(normalNum - me.getCards().size()) < 2);// can't deviate more than 1.
 			for (Card card : me.getCards()) {
-				// should not have same card as someone else
-				for (Player other : board.getPlayers()) {
-					if (other != me) {
-						assertFalse(other.getCards().contains(card));
-					}
-				}
+				assertTrue(deck.remove(card));
 			}
 		}
+		// ensure every card has been dealt
+		assertEquals(0, deck.size());
 	}
-
 }
