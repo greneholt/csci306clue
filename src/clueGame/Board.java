@@ -15,9 +15,9 @@ public class Board {
 	private Map<Integer, LinkedList<Integer>> adjacencies = new HashMap<Integer, LinkedList<Integer>>();
 	private Set<BoardCell> targets = new HashSet<BoardCell>();
 	private Set<Integer> path = new HashSet<Integer>();
-	private Set<Player> players = new HashSet<Player>(); // contains all players
-	private HumanPlayer human = new HumanPlayer();
-	private Set<Card> deck = new TreeSet<Card>();
+	private List<Player> players = new ArrayList<Player>(); // contains all players
+	private HumanPlayer human;
+	private List<Card> deck = new ArrayList<Card>();
 	private Solution solution;
 	private Card lastshown;
 
@@ -48,11 +48,19 @@ public class Board {
 	}
 
 	public void deal() {
-
-	}
-
-	public void deal(ArrayList<String> cardlist) {
-
+		if (players.size() == 0) return;
+		
+		Random rand = new Random();
+		
+		int i = 0;
+		
+		while (deck.size() > 0) {
+			Card card = deck.remove(rand.nextInt(deck.size())); // draw a random card
+			
+			players.get(i).giveCard(card);
+			
+			i = (i + 1) % players.size();
+		}
 	}
 
 	public LinkedList<Integer> getAdjList(int i) {
@@ -126,7 +134,7 @@ public class Board {
 		return neighbors;
 	}
 
-	public Set<Card> getDeck() {
+	public List<Card> getDeck() {
 		return deck;
 	}
 
@@ -154,7 +162,7 @@ public class Board {
 		return numRows;
 	}
 
-	public Set<Player> getPlayers() {
+	public List<Player> getPlayers() {
 		return players;
 	}
 
@@ -286,23 +294,12 @@ public class Board {
 		clearPlayers();
 		FileReader reader = new FileReader(playersFile);
 		Scanner scan = new Scanner(reader);
-		String[] line = scan.nextLine().split(",");
-		if (line.length != 3)
-			throw new BadConfigFormatException("Wrong number of data in first line of file: " + playersFile + ".");
-		HumanPlayer dude = new HumanPlayer();
-		dude.setName(line[0]);
-		dude.setPieceColor(Color.decode(line[1]));
-		dude.setCellIndex(Integer.parseInt(line[2]));
-		human = dude;
-		players.add(dude);
+		human = new HumanPlayer();
+		loadPlayer(human, scan);
+		players.add(human);
 		while (scan.hasNextLine()) {
-			line = scan.nextLine().split(",");
-			if (line.length != 3)
-				throw new BadConfigFormatException("Wrong number of data in line " + " of file: " + playersFile + ".");
 			ComputerPlayer droid = new ComputerPlayer();
-			droid.setName(line[0]);
-			droid.setPieceColor(Color.decode(line[1]));
-			droid.setCellIndex(Integer.parseInt(line[2]));
+			loadPlayer(droid, scan);
 			players.add(droid);
 		}
 
@@ -312,6 +309,16 @@ public class Board {
 		for (Player person : players) {
 			deck.add(new Card(person.getName(), CardType.PERSON));
 		}
+	}
+
+	private void loadPlayer(Player player, Scanner scan) throws BadConfigFormatException {
+		String[] line = scan.nextLine().split(",");
+		if (line.length != 3) {
+			throw new BadConfigFormatException("Wrong number of values in line " + line + " of players file");
+		}
+		player.setName(line[0]);
+		player.setPieceColor(Color.decode(line[1]));
+		player.setCellIndex(Integer.parseInt(line[2]));
 	}
 
 	public void clearPlayers() {
