@@ -1,6 +1,7 @@
 package clueGame;
 
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 public class ComputerPlayer extends Player {
@@ -12,7 +13,18 @@ public class ComputerPlayer extends Player {
 	}
 
 	public BoardCell pickLocation(Set<BoardCell> targets) {
-		return new WalkwayCell();
+		if (targets.size() == 0) return null;
+		
+		// look for a room in the targets
+		for (BoardCell target : targets) {
+			// if its a room that wasn't the last one visited, choose it
+			if (target.isRoom() && target.getInitial() != lastRoomVisited) {
+				return target;
+			}
+		}
+		
+		Random rand = new Random();
+		return (BoardCell) (targets.toArray())[rand.nextInt(targets.size())];
 	}
 
 	public Set<Card> createSuggestion() {

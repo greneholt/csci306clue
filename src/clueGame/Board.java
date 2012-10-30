@@ -17,7 +17,7 @@ public class Board {
 	private Set<Integer> path = new HashSet<Integer>();
 	private List<Player> players = new ArrayList<Player>(); // contains all players
 	private HumanPlayer human;
-	private List<Card> deck = new ArrayList<Card>();
+	private List<Card> deck = new LinkedList<Card>();
 	private Solution solution;
 	private Card lastshown;
 
@@ -50,12 +50,12 @@ public class Board {
 	public void deal() {
 		if (players.size() == 0) return;
 		
-		Random rand = new Random();
+		Collections.shuffle(deck);
 		
 		int i = 0;
 		
 		while (deck.size() > 0) {
-			Card card = deck.remove(rand.nextInt(deck.size())); // draw a random card
+			Card card = deck.remove(0); // the deck is shuffled, so just remove the first card
 			
 			players.get(i).giveCard(card);
 			

@@ -51,16 +51,16 @@ public class GameActionsTests {
 	public void testComputerSelectRandomTarget() {
 		ComputerPlayer computer = new ComputerPlayer();
 
-		// move them to the top left corner, where no conservatorys are accessible
-		computer.setCellIndex(board.calcIndex(0, 0));
-		checkRandomconservatoryTarget(computer, 5);
+		// move them to the top left corner, where no rooms are accessible
+		computer.setCellIndex(board.calcIndex(0, 4));
+		checkRandomRoomTarget(computer, 5);
 	}
 
 	@Test
-	public void testComputerSelectconservatoryTarget() {
+	public void testComputerSelectRoomTarget() {
 		ComputerPlayer computer = new ComputerPlayer();
 
-		// move them to the top left corner, where no conservatorys are accessible
+		// move them to within range of a door
 		computer.setCellIndex(board.calcIndex(5, 7));
 		Set<BoardCell> targets = board.getTargets(computer.getCellIndex(), 3);
 
@@ -72,16 +72,16 @@ public class GameActionsTests {
 	}
 
 	@Test
-	public void testComputerSelectconservatoryRandomTarget() {
+	public void testComputerSelectRoomRandomTarget() {
 		ComputerPlayer computer = new ComputerPlayer();
 
-		// move them to the top left corner, where no conservatorys are accessible
+		// move them to the top left corner, where no Rooms are accessible
 		computer.setCellIndex(board.calcIndex(5, 7));
-		computer.setLastRoomVisited('R'); // if the conservatory was the last one entered,
-		checkRandomconservatoryTarget(computer, 3);
+		computer.setLastRoomVisited('R'); // if the Room was the last one entered,
+		checkRandomRoomTarget(computer, 3);
 	}
 
-	private void checkRandomconservatoryTarget(ComputerPlayer computer, int steps) {
+	private void checkRandomRoomTarget(ComputerPlayer computer, int steps) {
 		Set<BoardCell> targets = board.getTargets(computer.getCellIndex(), steps);
 		Map<BoardCell, Integer> choiceCounts = new HashMap<BoardCell, Integer>();
 
