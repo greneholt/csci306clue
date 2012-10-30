@@ -23,7 +23,7 @@ public class BoardInitTests {
 	public static final int NUM_COLUMNS = 23;
 	
 	@BeforeClass
-	public static void setup() throws FileNotFoundException, BadConfigFormatException {
+	public static void setup() throws Exception {
 		board = new Board();
 		board.loadConfigFiles("ClueBoardLegend.txt", "ClueBoardLayout.csv", "weapons.txt", "players.txt");
 	}

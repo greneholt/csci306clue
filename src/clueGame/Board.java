@@ -3,6 +3,7 @@ package clueGame;
 import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 import clueGame.Card.CardType;
@@ -19,10 +20,7 @@ public class Board {
 	private Set<Card> deck = new TreeSet<Card>();
 	private Solution solution;
 	private Card lastshown;
-	private final int[] STARTpositions = {
-			3,4,5,26,37,78
-	};
-	
+
 	private int numRows;
 
 	private int numColumns;
@@ -31,7 +29,7 @@ public class Board {
 		int index = (row * numColumns) + col;
 		return index;
 	}
-	
+
 	private void calcTargets(int calcIndex, int steps) {
 		for (Integer neighbor : getAdjList(calcIndex)) {
 			if (path.contains(neighbor))
@@ -135,7 +133,7 @@ public class Board {
 	public BoardCell getCellAt(int i) {
 		return cells.get(i);
 	}
-	
+
 	public BoardCell getCellAt(int row, int col) {
 		return cells.get(calcIndex(row, col));
 	}
@@ -147,7 +145,7 @@ public class Board {
 	public HumanPlayer getHuman() {
 		return human;
 	}
-	
+
 	public int getNumColumns() {
 		return numColumns;
 	}
@@ -155,11 +153,11 @@ public class Board {
 	public int getNumRows() {
 		return numRows;
 	}
-	
+
 	public Set<Player> getPlayers() {
 		return players;
 	}
-	
+
 	public RoomCell getRoomCellAt(int row, int col) {
 		if (cells.get(this.calcIndex(row, col)).isRoom()) {
 			return (RoomCell) cells.get(this.calcIndex(row, col));
@@ -189,7 +187,7 @@ public class Board {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param person
 	 * @param weapon
 	 * @param room
@@ -197,10 +195,10 @@ public class Board {
 	 */
 	public boolean handleSuggestion(Card person, Card weapon, Card room) {
 		return false;
-		//lastshown = randomperson.disproveSuggestion(...);
+		// lastshown = randomperson.disproveSuggestion(...);
 	}
 
-	private void loadBoard(String boardFile) throws BadConfigFormatException, FileNotFoundException {
+	private void loadBoard(String boardFile) throws BadConfigFormatException, IOException {
 		FileReader reader = new FileReader(boardFile);
 		Scanner scan = new Scanner(reader);
 		// populate cell list
@@ -236,30 +234,31 @@ public class Board {
 			++j;
 		}
 		numRows = j;
+
+		scan.close();
+		reader.close();
 	}
 
-	public void loadCards(String cardsfile) throws FileNotFoundException {
-		FileReader filereadomatic = new FileReader(cardsfile);
-		Scanner scn = new Scanner(filereadomatic);
-		while(scn.hasNextLine()){
-			deck.add(new Card(scn.nextLine(),CardType.WEAPON));
+	private void loadWeapons(String weaponsFile) throws IOException {
+		FileReader reader = new FileReader(weaponsFile);
+		Scanner scan = new Scanner(reader);
+
+		while (scan.hasNextLine()) {
+			deck.add(new Card(scan.nextLine(), CardType.WEAPON));
 		}
-		for(String room : rooms.values()){
-			deck.add(new Card(room,CardType.ROOM));
-		}
-		for(Player person : players){
-			deck.add(new Card(person.getName(),CardType.PERSON));
-		}				
+
+		scan.close();
+		reader.close();
 	}
 
-	public void loadConfigFiles(String legendFile, String boardFile, String cardFile, String playersFile) throws BadConfigFormatException, FileNotFoundException {
+	public void loadConfigFiles(String legendFile, String boardFile, String weaponsFile, String playersFile) throws BadConfigFormatException, IOException {
 		loadLegend(legendFile);
 		loadBoard(boardFile);
 		loadPlayers(playersFile);
-		loadCards(cardFile);
+		loadWeapons(weaponsFile);
 	}
 
-	private void loadLegend(String legendFile) throws BadConfigFormatException, FileNotFoundException {
+	private void loadLegend(String legendFile) throws BadConfigFormatException, IOException {
 		FileReader reader = new FileReader(legendFile);
 		Scanner scan = new Scanner(reader);
 		// populate legend map
@@ -274,32 +273,48 @@ public class Board {
 			char c = character.charAt(0);
 			rooms.put(c, room);
 		}
+
+		scan.close();
+		reader.close();
+
+		for (String room : rooms.values()) {
+			deck.add(new Card(room, CardType.ROOM));
+		}
 	}
 
-	public void loadPlayers(String playersFile) throws FileNotFoundException,BadConfigFormatException{
+	private void loadPlayers(String playersFile) throws BadConfigFormatException, IOException {
 		clearPlayers();
-		FileReader filereadomatic = new FileReader(playersFile);
-		Scanner scn = new Scanner(filereadomatic);
-		String[] line = scn.nextLine().split(",");
-		if(line.length != 3)throw new BadConfigFormatException("Wrong number of data in first line of file: "+playersFile+".");
+		FileReader reader = new FileReader(playersFile);
+		Scanner scan = new Scanner(reader);
+		String[] line = scan.nextLine().split(",");
+		if (line.length != 3)
+			throw new BadConfigFormatException("Wrong number of data in first line of file: " + playersFile + ".");
 		HumanPlayer dude = new HumanPlayer();
 		dude.setName(line[0]);
 		dude.setPieceColor(Color.decode(line[1]));
 		dude.setCellIndex(Integer.parseInt(line[2]));
 		human = dude;
 		players.add(dude);
-		while(scn.hasNextLine()){
-			line = scn.nextLine().split(",");
-			if(line.length != 3)throw new BadConfigFormatException("Wrong number of data in line "+" of file: "+playersFile+".");
+		while (scan.hasNextLine()) {
+			line = scan.nextLine().split(",");
+			if (line.length != 3)
+				throw new BadConfigFormatException("Wrong number of data in line " + " of file: " + playersFile + ".");
 			ComputerPlayer droid = new ComputerPlayer();
 			droid.setName(line[0]);
 			droid.setPieceColor(Color.decode(line[1]));
 			droid.setCellIndex(Integer.parseInt(line[2]));
 			players.add(droid);
 		}
+
+		scan.close();
+		reader.close();
+
+		for (Player person : players) {
+			deck.add(new Card(person.getName(), CardType.PERSON));
+		}
 	}
-	
-	public void clearPlayers(){
+
+	public void clearPlayers() {
 		players.clear();
 	}
 
