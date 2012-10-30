@@ -1,6 +1,8 @@
 package clueGame;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -27,14 +29,38 @@ public class ComputerPlayer extends Player {
 		return (BoardCell) (targets.toArray())[rand.nextInt(targets.size())];
 	}
 
-	public Set<Card> createSuggestion() {
+	/**
+	 * Can return null if every card of a certain type has been seen
+	 */
+	public CardSet createSuggestion(Card room, List<Card> cards) {
+		List<Card> weapons = new LinkedList<Card>();
+		List<Card> people = new LinkedList<Card>();
 		
+		for (Card card : cards) {
+			if (!seenCards.contains(card) && !getCards().contains(card)) {
+				switch(card.getType()) {
+				case WEAPON:
+					weapons.add(card);
+					break;
+				case PERSON:
+					people.add(card);
+					break;
+				}
+			}
+		}
 		
+		if (weapons.size() == 0 || people.size() == 0) return null;
 		
-		return seenCards;//TODO fix this to make tests pass
+		Random rand = new Random();
+		
+		Card weapon = weapons.get(rand.nextInt(weapons.size()));
+		Card person = people.get(rand.nextInt(people.size()));
+		
+		return new CardSet(person, weapon, room);
 	}
 
 	public void markSeen(Card seen) {
+		seenCards.add(seen);
 	}
 
 	public char getLastRoomVisited() {

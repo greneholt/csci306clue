@@ -1,8 +1,8 @@
 package clueGame;
 
 public class Card {
-	String name;
-	CardType type;
+	private String name;
+	private CardType type;
 
 	public Card(String name, CardType type) {
 		this.name = name;
@@ -33,5 +33,15 @@ public class Card {
 		}
 		
 		return false;
+	}
+	
+	@Override
+	public String toString() {
+		return name + " " + type.toString();
+	}
+	
+	@Override
+	public int hashCode() {
+		return name.hashCode() + type.hashCode();
 	}
 }

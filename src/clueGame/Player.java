@@ -2,6 +2,9 @@ package clueGame;
 
 import java.awt.Color;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 public class Player {
@@ -51,6 +54,25 @@ public class Player {
 	}
 	
 	public Card disproveSuggestion(Card person, Card weapon, Card room) {
-		return null;
+		List<Card> hasCards = new LinkedList<Card>();
+		
+		if (cards.contains(person)) {
+			hasCards.add(person);
+		}
+		
+		if (cards.contains(weapon)) {
+			hasCards.add(weapon);
+		}
+		
+		if (cards.contains(room)) {
+			hasCards.add(room);
+		}
+		
+		if (hasCards.size() > 0) {
+			Random rand = new Random();
+			return hasCards.get(rand.nextInt(hasCards.size()));
+		} else {
+			return null;
+		}
 	}
 }

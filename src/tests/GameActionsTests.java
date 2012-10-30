@@ -17,7 +17,7 @@ import clueGame.Card;
 import clueGame.ComputerPlayer;
 import clueGame.HumanPlayer;
 import clueGame.Player;
-import clueGame.Solution;
+import clueGame.CardSet;
 
 public class GameActionsTests {
 	private static Board board;
@@ -36,7 +36,7 @@ public class GameActionsTests {
 
 	@Test
 	public void testAccusation() {
-		Solution solution = new Solution(scarlet, pipe, conservatory);
+		CardSet solution = new CardSet(scarlet, pipe, conservatory);
 
 		board.setSolution(solution);
 
@@ -98,11 +98,12 @@ public class GameActionsTests {
 		}
 
 		int totalChoices = 0;
-		for (int count : choiceCounts.values()) {
-			totalChoices += count;
-			if (count == 0) {
+		
+		for (BoardCell target : targets) {
+			if (choiceCounts.get(target) == null || choiceCounts.get(target) <= 0) {
 				fail("Cell choice not random");
 			}
+			totalChoices += choiceCounts.get(target);
 		}
 		assertEquals(100, totalChoices);
 	}
@@ -138,24 +139,31 @@ public class GameActionsTests {
 		}
 
 		int totalChoices = 0;
-		for (int count : choiceCounts.values()) {
-			totalChoices += count;
-			if (count == 0) {
+		for (Card option : options) {
+			if (choiceCounts.get(option) == null || choiceCounts.get(option) <= 0) {
 				fail("Card choice not random");
 			}
+			totalChoices += choiceCounts.get(option);
 		}
 		assertEquals(100, totalChoices);
 	}
 
 	@Test
-	public void testDisproveSuggestionTwoPlayers() {
-		ComputerPlayer jim=new ComputerPlayer();
+	public void testDisproveSuggestionThreePlayers() {
+		ComputerPlayer jim = new ComputerPlayer();
 		jim.giveCard(conservatory);
 		ComputerPlayer bob = new ComputerPlayer();
 		bob.giveCard(mustard);
 		board.getPlayers().add(jim);
 		board.getPlayers().add(bob);
-
+		
+		ComputerPlayer tim = new ComputerPlayer();
+		tim.giveCard(confetti);
+		board.getPlayers().add(tim);
+		
+		// suggestion that no one can disprove
+		assertNull(board.disproveSuggestion(null, scarlet, pipe, ballroom));
+		
 		Set<Card> options = new HashSet<Card>();
 		options.add(conservatory);
 		options.add(mustard);
@@ -163,10 +171,12 @@ public class GameActionsTests {
 
 		// disprove 100 times, and then ensure each option is given at least once
 		for (int i = 0; i < 100; i++) {
-			board.handleSuggestion(mustard, pipe, conservatory);
-			Card card = board.getLastshown();
-			assertTrue("Invalid card", options.contains(card));
+			Card card = board.disproveSuggestion(tim, mustard, pipe, conservatory);
 
+			assertNotNull(card);
+			
+			assertTrue("Invalid card", options.contains(card));
+			
 			int count = 1;
 			if (choiceCounts.containsKey(card)) {
 				count += choiceCounts.get(card);
@@ -175,42 +185,41 @@ public class GameActionsTests {
 		}
 
 		int totalChoices = 0;
-		for (int count : choiceCounts.values()) {
-			totalChoices += count;
-			if (count == 0) {
+		for (Card option : options) {
+			if (choiceCounts.get(option) == null || choiceCounts.get(option) <= 0) {
 				fail("Card choice not random");
 			}
+			totalChoices += choiceCounts.get(option);
 		}
 		assertEquals(100, totalChoices);
 	}
 
 	@Test
 	public void testDontDisproveMyself() {
-		ComputerPlayer Jorge = new ComputerPlayer();
-		Jorge.giveCard(scarlet);
-		Jorge.giveCard(ballroom);
+		ComputerPlayer jorge = new ComputerPlayer();
+		jorge.giveCard(scarlet);
+		jorge.giveCard(ballroom);
 		board.getPlayers().clear();
-		//make sure someone doesn't randomly have one of those cards
-		board.getPlayers().add(Jorge);
-		for (int i = 0; i < 100; i++) {
-			assertFalse(board.handleSuggestion(scarlet, confetti, ballroom));
-			//make sure that, even after 100 times, a player does not "show themself" a card.
-		}
+		// make sure someone doesn't randomly have one of those cards
+		board.getPlayers().add(jorge);
+		// ensure that a player cannot disprove themself
+		assertNull(board.disproveSuggestion(jorge, scarlet, confetti, ballroom));
 	}
 
 	@Test
-	public void testComputerSuggestion(){
-		ComputerPlayer Dumbo = new ComputerPlayer();
-		Dumbo.giveCard(mustard);
-		Dumbo.markSeen(ballroom);
-		Dumbo.markSeen(scarlet);
-		Dumbo.markSeen(pipe);
-		for(int i =0; i<100;i++){
-			Set<Card> DumbSeen = Dumbo.createSuggestion();
-			assertFalse(DumbSeen.contains(mustard));
-			assertFalse(DumbSeen.contains(ballroom));
-			assertFalse(DumbSeen.contains(scarlet));
-			assertFalse(DumbSeen.contains(pipe));
+	public void testComputerSuggestion() {
+		ComputerPlayer dumbo = new ComputerPlayer();
+		dumbo.giveCard(mustard);
+		dumbo.markSeen(ballroom);
+		dumbo.markSeen(scarlet);
+		dumbo.markSeen(pipe);
+		for (int i = 0; i < 100; i++) {
+			CardSet suggestion = dumbo.createSuggestion(ballroom, board.getCards());
+			
+			assertFalse(suggestion.getPerson().equals(scarlet));
+			assertFalse(suggestion.getPerson().equals(mustard));
+			assertFalse(suggestion.getWeapon().equals(pipe));
+			assertEquals(suggestion.getRoom(), ballroom);
 		}
 	}
 }

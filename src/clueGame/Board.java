@@ -18,8 +18,7 @@ public class Board {
 	private List<Player> players = new ArrayList<Player>(); // contains all players
 	private HumanPlayer human;
 	private List<Card> cards = new LinkedList<Card>();
-	private Solution solution;
-	private Card lastshown;
+	private CardSet solution;
 
 	private int numRows;
 
@@ -49,16 +48,16 @@ public class Board {
 
 	public void deal() {
 		if (players.size() == 0) return;
-		
+
 		List<Card> deck = new LinkedList<Card>(cards); // duplicate the cards list for dealing
 		Collections.shuffle(deck);
-		
+
 		int i = 0;
 		while (deck.size() > 0) {
 			Card card = deck.remove(0); // the deck is shuffled, so just remove the first card
-			
+
 			players.get(i).giveCard(card);
-			
+
 			i = (i + 1) % players.size();
 		}
 	}
@@ -178,7 +177,7 @@ public class Board {
 		return rooms;
 	}
 
-	public Solution getSolution() {
+	public CardSet getSolution() {
 		return solution;
 	}
 
@@ -198,16 +197,24 @@ public class Board {
 		}
 	}
 
-	/**
-	 *
-	 * @param person
-	 * @param weapon
-	 * @param room
-	 * @return false if no card is shown
-	 */
-	public boolean handleSuggestion(Card person, Card weapon, Card room) {
-		return false;
-		// lastshown = randomperson.disproveSuggestion(...);
+	public Card disproveSuggestion(Player from, Card person, Card weapon, Card room) {
+		List<Card> foundCards = new LinkedList<Card>();
+
+		for (Player player : players) {
+			if (player != from) {
+				Card card = player.disproveSuggestion(person, weapon, room);
+				if (card != null) {
+					foundCards.add(card);
+				}
+			}
+		}
+
+		if (foundCards.size() > 0) {
+			Random rand = new Random();
+			return foundCards.get(rand.nextInt(foundCards.size()));
+		} else {
+			return null;
+		}
 	}
 
 	private void loadBoard(String boardFile) throws BadConfigFormatException, IOException {
@@ -333,11 +340,7 @@ public class Board {
 
 	}
 
-	public void setSolution(Solution solution) {
+	public void setSolution(CardSet solution) {
 		this.solution = solution;
-	}
-
-	public Card getLastshown() {
-		return lastshown;
 	}
 }
