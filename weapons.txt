@@ -1,0 +1,6 @@
+CandleStick
+Revolver
+Lead Pipe
+Wrench
+Rope
+Knife

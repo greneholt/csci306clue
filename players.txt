@@ -1,0 +1,6 @@
+Colonel Mustard,0xFFFF00
+Miss Scarlet,0xFF0000
+Mrs. White,0xFFFFFF
+Mr. Green,0x00FF00
+Professor Plum,0xEEFF10
+Mrs. Peacock,0x0000FF
