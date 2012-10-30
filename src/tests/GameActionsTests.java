@@ -36,39 +36,7 @@ public class GameActionsTests {
 
 	@Test
 	public void testAccusation() {
-
-		Card lastPerson = null;
-		Card lastWeapon = null;
-		Card lastRoom = null;
-		Card firstPerson = null;
-		Card firstWeapon = null;
-		Card firstRoom = null;
-		for (Card card : board.getDeck()) {
-			switch (card.getType()) {
-			case PERSON:
-				if (firstPerson == null) firstPerson = card;
-				lastPerson = card;
-				break;
-			case WEAPON:
-				if (firstWeapon == null) firstWeapon = card;
-				lastWeapon = card;
-				break;
-			case ROOM:
-				if (firstRoom == null) firstRoom = card;
-				lastRoom = card;
-				break;
-			}
-		}
-
-		assertNotNull(lastPerson);
-		assertNotNull(lastWeapon);
-		assertNotNull(lastRoom);
-
-		assertNotNull(firstPerson);
-		assertNotNull(firstWeapon);
-		assertNotNull(firstRoom);
-
-		Solution solution = new Solution(lastPerson, lastWeapon, lastRoom);
+		Solution solution = new Solution(scarlet, pipe, conservatory);
 
 		board.setSolution(solution);
 

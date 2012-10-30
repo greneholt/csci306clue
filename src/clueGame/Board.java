@@ -191,7 +191,11 @@ public class Board {
 	}
 
 	public boolean checkAccusation(Card person, Card weapon, Card room) {
-		return false;
+		if (person.equals(solution.getPerson()) && weapon.equals(solution.getWeapon()) && room.equals(solution.getRoom())) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
