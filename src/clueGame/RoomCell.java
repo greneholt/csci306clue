@@ -1,7 +1,8 @@
 package clueGame;
 
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 
 public class RoomCell extends BoardCell {
 
@@ -37,10 +38,11 @@ public class RoomCell extends BoardCell {
 	}
 
 	@Override
-	public void draw(Graphics g, float cellWidth, float cellHeight) {
-		int x = (int)(cellWidth * getColumn());
-		int y = (int)(cellHeight * getRow());
-		g.setColor(new Color(0x33B8CB));
-		g.fillRect(x, y, (int)cellWidth + 2, (int)cellHeight + 2);
+	public void draw(Graphics2D g2d, float cellWidth, float cellHeight) {
+		float x = cellWidth * getColumn();
+		float y = cellHeight * getRow();
+		g2d.setColor(new Color(0xdddddd));
+		Rectangle2D.Float rect = new Rectangle2D.Float(x, y, cellWidth, cellHeight);
+		g2d.fill(rect);
 	}
 }

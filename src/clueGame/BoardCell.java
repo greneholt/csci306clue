@@ -1,6 +1,6 @@
 package clueGame;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 public abstract class BoardCell {
 	private int row, column, index;
@@ -35,7 +35,7 @@ public abstract class BoardCell {
 		return index;
 	}
 	
-	public abstract void draw(Graphics g, float cellWidth, float cellHeight);
+	public abstract void draw(Graphics2D g2d, float cellWidth, float cellHeight);
 
 	@Override
 	public String toString() {

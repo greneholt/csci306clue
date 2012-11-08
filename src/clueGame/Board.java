@@ -2,6 +2,7 @@ package clueGame;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -227,11 +228,15 @@ public class Board extends JComponent {
 	}
 	
 	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		
+		Graphics2D g2d = (Graphics2D) g;
+		
 		float cellWidth = (float)getWidth() / numColumns;
 		float cellHeight = (float)getHeight() / numRows;
 		
 		for (BoardCell cell : cells) {
-			cell.draw(g, cellWidth, cellHeight);
+			cell.draw(g2d, cellWidth, cellHeight);
 		}
 	}
 
