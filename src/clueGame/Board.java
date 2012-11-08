@@ -1,6 +1,7 @@
 package clueGame;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -17,12 +18,12 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
-import javax.swing.JPanel;
+import javax.swing.JComponent;
 
 import clueGame.Card.CardType;
 import clueGame.RoomCell.DoorDirection;
 
-public class Board extends JPanel {
+public class Board extends JComponent {
 	private Map<Integer, LinkedList<Integer>> adjacencies = new HashMap<Integer, LinkedList<Integer>>();
 	private List<Card> cards = new LinkedList<Card>();
 	private ArrayList<BoardCell> cells = new ArrayList<BoardCell>();
@@ -223,6 +224,15 @@ public class Board extends JPanel {
 		loadBoard(boardFile);
 		loadPlayers(playersFile);
 		loadWeapons(weaponsFile);
+	}
+	
+	protected void paintComponent(Graphics g) {
+		float cellWidth = (float)getWidth() / numColumns;
+		float cellHeight = (float)getHeight() / numRows;
+		
+		for (BoardCell cell : cells) {
+			cell.draw(g, cellWidth, cellHeight);
+		}
 	}
 
 	public void selectAnswer() {

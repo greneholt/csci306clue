@@ -1,5 +1,7 @@
 package clueGame;
 
+import java.awt.Graphics;
+
 public abstract class BoardCell {
 	private int row, column, index;
 
@@ -32,6 +34,8 @@ public abstract class BoardCell {
 	public int getIndex() {
 		return index;
 	}
+	
+	public abstract void draw(Graphics g, float cellWidth, float cellHeight);
 
 	@Override
 	public String toString() {
