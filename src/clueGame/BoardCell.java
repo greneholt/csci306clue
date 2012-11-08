@@ -1,34 +1,40 @@
 package clueGame;
 
 public abstract class BoardCell {
+	private int row, column, index;
 
-	int row;
-	int col;
-	public int boardWidth;
-
-	public abstract boolean isWalkway();
-
-	public abstract boolean isRoom();
-
-	public abstract boolean isDoorway();
-
-	public abstract char getInitial();
-
-	abstract void draw();
-
-	public void setRow(int row) {
+	public BoardCell(int row, int column, int index) {
 		this.row = row;
+		this.column = column;
+		this.index = index;
 	}
 
-	public void setCol(int col) {
-		this.col = col;
+	public boolean isWalkway() {
+		return false;
 	}
 
-	public void setBoardWidth(int w) {
-		this.boardWidth = w;
+	public boolean isRoom() {
+		return false;
+	}
+
+	public boolean isDoorway() {
+		return false;
+	}
+
+	public int getRow() {
+		return row;
+	}
+
+	public int getColumn() {
+		return column;
 	}
 
 	public int getIndex() {
-		return row * boardWidth + col;
+		return index;
+	}
+
+	@Override
+	public String toString() {
+		return "Cell @ row=" + row + " column=" + column;
 	}
 }

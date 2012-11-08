@@ -1,30 +1,12 @@
 package clueGame;
 
 public class WalkwayCell extends BoardCell {
-
-	public WalkwayCell() {
-		super();
-	}
-
-	public boolean isWalkway() {
-		return true;
-	}
-
-	public boolean isRoom() {
-		return false;
-	}
-
-	public boolean isDoorway() {
-		return false;
-	}
-
-	void draw() {
-		// TODO Auto-generated method stub
-
+	public WalkwayCell(int row, int column, int index) {
+		super(row, column, index);
 	}
 
 	@Override
-	public char getInitial() {
-		return 'W';
+	public boolean isWalkway() {
+		return true;
 	}
 }

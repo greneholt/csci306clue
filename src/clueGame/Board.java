@@ -23,44 +23,40 @@ import clueGame.Card.CardType;
 import clueGame.RoomCell.DoorDirection;
 
 public class Board extends JPanel {
-	private ArrayList<BoardCell> cells = new ArrayList<BoardCell>();
-	private Map<Character, String> rooms = new TreeMap<Character, String>();
 	private Map<Integer, LinkedList<Integer>> adjacencies = new HashMap<Integer, LinkedList<Integer>>();
-	private Set<BoardCell> targets = new HashSet<BoardCell>();
+	private List<Card> cards = new LinkedList<Card>();
+	private ArrayList<BoardCell> cells = new ArrayList<BoardCell>();
+	private HumanPlayer human;
+	private int numColumns;
+	private int numRows;
 	private Set<Integer> path = new HashSet<Integer>();
 	private List<Player> players = new ArrayList<Player>(); // contains all players
-	private HumanPlayer human;
-	private List<Card> cards = new LinkedList<Card>();
+	private Map<Character, String> rooms = new TreeMap<Character, String>();
+
 	private CardSet solution;
 
-	private int numRows;
-
-	private int numColumns;
+	private Set<BoardCell> targets = new HashSet<BoardCell>();
 
 	public int calcIndex(int row, int col) {
 		int index = (row * numColumns) + col;
 		return index;
 	}
 
-	private void calcTargets(int calcIndex, int steps) {
-		for (Integer neighbor : getAdjList(calcIndex)) {
-			if (path.contains(neighbor))
-				continue;
-
-			path.add(neighbor);
-
-			// we include the initial cell in the path, so the path size has to exceed steps by one
-			if (path.size() > steps || getCellAt(neighbor).isDoorway()) {
-				targets.add(getCellAt(neighbor));
-			} else {
-				calcTargets(neighbor, steps);
-			}
-			path.remove(neighbor);
+	public boolean checkAccusation(Card person, Card weapon, Card room) {
+		if (person.equals(solution.getPerson()) && weapon.equals(solution.getWeapon()) && room.equals(solution.getRoom())) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 
+	public void clearPlayers() {
+		players.clear();
+	}
+
 	public void deal() {
-		if (players.size() == 0) return;
+		if (players.size() == 0)
+			return;
 
 		List<Card> deck = new LinkedList<Card>(cards); // duplicate the cards list for dealing
 		Collections.shuffle(deck);
@@ -72,6 +68,26 @@ public class Board extends JPanel {
 			players.get(i).giveCard(card);
 
 			i = (i + 1) % players.size();
+		}
+	}
+
+	public Card disproveSuggestion(Player from, Card person, Card weapon, Card room) {
+		List<Card> foundCards = new LinkedList<Card>();
+
+		for (Player player : players) {
+			if (player != from) {
+				Card card = player.disproveSuggestion(person, weapon, room);
+				if (card != null) {
+					foundCards.add(card);
+				}
+			}
+		}
+
+		if (foundCards.size() > 0) {
+			Random rand = new Random();
+			return foundCards.get(rand.nextInt(foundCards.size()));
+		} else {
+			return null;
 		}
 	}
 
@@ -202,92 +218,99 @@ public class Board extends JPanel {
 		return targets;
 	}
 
-	public boolean checkAccusation(Card person, Card weapon, Card room) {
-		if (person.equals(solution.getPerson()) && weapon.equals(solution.getWeapon()) && room.equals(solution.getRoom())) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	public Card disproveSuggestion(Player from, Card person, Card weapon, Card room) {
-		List<Card> foundCards = new LinkedList<Card>();
-
-		for (Player player : players) {
-			if (player != from) {
-				Card card = player.disproveSuggestion(person, weapon, room);
-				if (card != null) {
-					foundCards.add(card);
-				}
-			}
-		}
-
-		if (foundCards.size() > 0) {
-			Random rand = new Random();
-			return foundCards.get(rand.nextInt(foundCards.size()));
-		} else {
-			return null;
-		}
-	}
-
-	private void loadBoard(String boardFile) throws BadConfigFormatException, IOException {
-		FileReader reader = new FileReader(boardFile);
-		Scanner scan = new Scanner(reader);
-		// populate cell list
-		int j = 0;
-		while (scan.hasNext()) {
-			String wholeString = scan.nextLine();
-			if (!wholeString.contains(",")) {
-				throw new BadConfigFormatException();
-			}
-			String[] strArr = wholeString.split(",");
-			for (int i = 0; i < strArr.length; i++) {
-				String str = strArr[i];
-				if (str.equalsIgnoreCase("W")) {
-					WalkwayCell wc = new WalkwayCell();
-					wc.setCol(i);
-					wc.setRow(j);
-					wc.setBoardWidth(strArr.length);
-					cells.add(wc);
-				} else {
-					RoomCell rc = new RoomCell();
-					if (str.length() == 2) {
-						char d = str.charAt(1);
-						rc.setDoorDirection(d);
-					}
-					rc.setCol(i);
-					rc.setRow(j);
-					rc.setBoardWidth(strArr.length);
-					rc.setRoom(str.charAt(0));
-					cells.add(rc);
-				}
-			}
-			numColumns = strArr.length;
-			++j;
-		}
-		numRows = j;
-
-		scan.close();
-		reader.close();
-	}
-
-	private void loadWeapons(String weaponsFile) throws IOException {
-		FileReader reader = new FileReader(weaponsFile);
-		Scanner scan = new Scanner(reader);
-
-		while (scan.hasNextLine()) {
-			cards.add(new Card(scan.nextLine(), CardType.WEAPON));
-		}
-
-		scan.close();
-		reader.close();
-	}
-
 	public void loadConfigFiles(String legendFile, String boardFile, String weaponsFile, String playersFile) throws BadConfigFormatException, IOException {
 		loadLegend(legendFile);
 		loadBoard(boardFile);
 		loadPlayers(playersFile);
 		loadWeapons(weaponsFile);
+	}
+
+	public void selectAnswer() {
+
+	}
+
+	public void setSolution(CardSet solution) {
+		this.solution = solution;
+	}
+
+	private void calcTargets(int calcIndex, int steps) {
+		for (Integer neighbor : getAdjList(calcIndex)) {
+			if (path.contains(neighbor))
+				continue;
+
+			path.add(neighbor);
+
+			// we include the initial cell in the path, so the path size has to exceed steps by one
+			if (path.size() > steps || getCellAt(neighbor).isDoorway()) {
+				targets.add(getCellAt(neighbor));
+			} else {
+				calcTargets(neighbor, steps);
+			}
+			path.remove(neighbor);
+		}
+	}
+
+	private void loadBoard(String boardFile) throws BadConfigFormatException, IOException {
+		numRows = 0;
+		numColumns = -1;
+		String[] spaces;
+		FileReader reader = new FileReader(boardFile);
+		Scanner scan = new Scanner(reader);
+		while (scan.hasNextLine()) {
+			spaces = scan.nextLine().split(",");
+
+			// if the number of columns changes, the file is invalid
+			if (numColumns != -1 && numColumns != spaces.length) {
+				throw new BadConfigFormatException("Inconsistent number of spaces in row " + numRows);
+			}
+
+			numColumns = spaces.length;
+
+			for (int i = 0; i < numColumns; i++) {
+				String space = spaces[i];
+				if (space.equalsIgnoreCase("W")) {
+					cells.add(new WalkwayCell(numRows, i, calcIndex(numRows, i)));
+				} else {
+					if (space.length() > 0 && space.length() <= 2) {
+						char initial = space.charAt(0);
+
+						if (!rooms.containsKey(initial)) {
+							throw new BadConfigFormatException("Invalid room initial '" + initial + '"');
+						}
+
+						DoorDirection direction = DoorDirection.NONE;
+
+						if (space.length() > 1) {
+							switch (space.charAt(1)) {
+							case 'R':
+								direction = DoorDirection.RIGHT;
+								break;
+							case 'L':
+								direction = DoorDirection.LEFT;
+								break;
+							case 'U':
+								direction = DoorDirection.UP;
+								break;
+							case 'D':
+								direction = DoorDirection.DOWN;
+								break;
+							default:
+								throw new BadConfigFormatException("Invalid room direction '" + space.charAt(1) + "'");
+							}
+						}
+
+						cells.add(new RoomCell(numRows, i, calcIndex(numRows, i), initial, direction));
+					} else {
+						throw new BadConfigFormatException("Wrong length of room '" + space + "'");
+					}
+				}
+			}
+
+			numRows++;
+		}
+		
+		scan.close();
+		reader.close();
 	}
 
 	private void loadLegend(String legendFile) throws BadConfigFormatException {
@@ -311,10 +334,20 @@ public class Board extends JPanel {
 			System.out.println("I'm sorry, but the " + legendFile + " file is a figment of your imagination.");
 			System.out.println(e.getMessage());
 		}
-		
+
 		for (String room : rooms.values()) {
 			cards.add(new Card(room, CardType.ROOM));
 		}
+	}
+
+	private void loadPlayer(Player player, Scanner scan) throws BadConfigFormatException {
+		String[] line = scan.nextLine().split(",");
+		if (line.length != 3) {
+			throw new BadConfigFormatException("Wrong number of values in line " + line + " of players file");
+		}
+		player.setName(line[0]);
+		player.setPieceColor(Color.decode(line[1]));
+		player.setCellIndex(Integer.parseInt(line[2]));
 	}
 
 	private void loadPlayers(String playersFile) throws BadConfigFormatException, IOException {
@@ -338,25 +371,15 @@ public class Board extends JPanel {
 		}
 	}
 
-	private void loadPlayer(Player player, Scanner scan) throws BadConfigFormatException {
-		String[] line = scan.nextLine().split(",");
-		if (line.length != 3) {
-			throw new BadConfigFormatException("Wrong number of values in line " + line + " of players file");
+	private void loadWeapons(String weaponsFile) throws IOException {
+		FileReader reader = new FileReader(weaponsFile);
+		Scanner scan = new Scanner(reader);
+
+		while (scan.hasNextLine()) {
+			cards.add(new Card(scan.nextLine(), CardType.WEAPON));
 		}
-		player.setName(line[0]);
-		player.setPieceColor(Color.decode(line[1]));
-		player.setCellIndex(Integer.parseInt(line[2]));
-	}
 
-	public void clearPlayers() {
-		players.clear();
-	}
-
-	public void selectAnswer() {
-
-	}
-
-	public void setSolution(CardSet solution) {
-		this.solution = solution;
+		scan.close();
+		reader.close();
 	}
 }
