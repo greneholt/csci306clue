@@ -83,10 +83,9 @@ public class Player {
 		float x = cellWidth * (cellIndex % numCols);
 		float y = cellHeight * ((cellIndex-(cellIndex % numCols)) / numCols);
 		g2d.setColor(pieceColor);
-		Ellipse2D.Float circle = new Ellipse2D.Float(x, y, cellWidth, cellHeight); 
+		Ellipse2D.Float circle = new Ellipse2D.Float(x + 1, y + 1, cellWidth - 2, cellHeight - 2); 
 		g2d.fill(circle);
 		g2d.setColor(new Color(0x000000));
-		circle = new Ellipse2D.Float(x, y, cellWidth, cellHeight);
 		g2d.draw(circle);
 	}
 }
