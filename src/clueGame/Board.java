@@ -4,12 +4,25 @@ import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.regex.Pattern;
+
+import javax.swing.JPanel;
 
 import clueGame.Card.CardType;
 import clueGame.RoomCell.DoorDirection;
 
-public class Board {
+public class Board extends JPanel {
 	private ArrayList<BoardCell> cells = new ArrayList<BoardCell>();
 	private Map<Character, String> rooms = new TreeMap<Character, String>();
 	private Map<Integer, LinkedList<Integer>> adjacencies = new HashMap<Integer, LinkedList<Integer>>();
@@ -277,25 +290,28 @@ public class Board {
 		loadWeapons(weaponsFile);
 	}
 
-	private void loadLegend(String legendFile) throws BadConfigFormatException, IOException {
-		FileReader reader = new FileReader(legendFile);
-		Scanner scan = new Scanner(reader);
-		// populate legend map
-		while (scan.hasNext()) {
-			String wholeString = scan.nextLine();
-			if (!wholeString.contains(", ")) {
-				throw new BadConfigFormatException();
+	private void loadLegend(String legendFile) throws BadConfigFormatException {
+		Pattern legendLine = Pattern.compile("[A-Z],[A-Za-z ]+");
+
+		try {
+			FileReader f = new FileReader(legendFile);
+			Scanner scan = new Scanner(f);
+			while (scan.hasNextLine()) {
+				String line = scan.nextLine().trim();
+
+				if (!legendLine.matcher(line).matches()) {
+					throw new BadConfigFormatException("Invalid legend line '" + line + "'");
+				}
+
+				char abbr = line.charAt(0); // the abbreviation for the room
+				String room = line.substring(2).trim(); // trim off the abbreviation and comma to get the full name
+				rooms.put(abbr, room);
 			}
-			String[] stringArr = wholeString.split(", ");
-			String character = stringArr[0];
-			String room = stringArr[1];
-			char c = character.charAt(0);
-			rooms.put(c, room);
+		} catch (FileNotFoundException e) {
+			System.out.println("I'm sorry, but the " + legendFile + " file is a figment of your imagination.");
+			System.out.println(e.getMessage());
 		}
-
-		scan.close();
-		reader.close();
-
+		
 		for (String room : rooms.values()) {
 			cards.add(new Card(room, CardType.ROOM));
 		}
