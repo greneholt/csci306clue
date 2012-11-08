@@ -56,7 +56,7 @@ public class GameSetupTests {
 
 	@Test
 	public void cardsLoaded() {
-		assertEquals(12 + board.getRooms().size(), board.getCards().size());
+		assertEquals(21, board.getCards().size());
 		// 6 people, 6 weapons, and however many rooms we have.
 		int room = 0, pers = 0, weap = 0;
 		for (Card c : board.getCards()) {
@@ -77,7 +77,7 @@ public class GameSetupTests {
 		}
 		assertEquals(6, pers);
 		assertEquals(6, weap);
-		assertEquals(board.getRooms().size(), room);
+		assertEquals(9, room);
 		assertTrue(board.getCards().contains(new Card("Kitchen", CardType.ROOM)));
 		assertTrue(board.getCards().contains(new Card("Revolver", CardType.WEAPON)));
 		assertTrue(board.getCards().contains(new Card("Colonel Mustard", CardType.PERSON)));

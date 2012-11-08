@@ -230,30 +230,30 @@ public class Board extends JComponent {
 		loadPlayers(playersFile);
 		loadWeapons(weaponsFile);
 	}
-	
+
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		
+
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		
-		float cellWidth = (float)getWidth() / numColumns;
-		float cellHeight = (float)getHeight() / numRows;
-		
+
+		float cellWidth = (float) getWidth() / numColumns;
+		float cellHeight = (float) getHeight() / numRows;
+
 		for (BoardCell cell : cells) {
 			cell.draw(g2d, cellWidth, cellHeight);
 		}
-		
+
 		g2d.setColor(new Color(0x005662));
 		Font font = new Font("Copperplate Gothic Light", Font.PLAIN, 16);
-		font = font.deriveFont(cellWidth/2);
+		font = font.deriveFont(cellWidth / 2);
 		g2d.setFont(font);
 		for (Map.Entry<Point, String> label : labels.entrySet()) {
-			float x = cellWidth * label.getKey().x + cellWidth/2;
-			float y = cellHeight * label.getKey().y + cellHeight/2;
+			float x = cellWidth * label.getKey().x + cellWidth / 2;
+			float y = cellHeight * label.getKey().y + cellHeight / 2;
 			g2d.drawString(label.getValue(), x, y);
 		}
-		
+
 		// Draw players
 		for (Player p : players) {
 			p.draw(g2d, cellWidth, cellHeight, numRows, numColumns);
@@ -343,7 +343,7 @@ public class Board extends JComponent {
 
 			numRows++;
 		}
-		
+
 		scan.close();
 		reader.close();
 	}
@@ -360,13 +360,13 @@ public class Board extends JComponent {
 				if (!legendLine.matcher(line).matches()) {
 					throw new BadConfigFormatException("Invalid legend line '" + line + "'");
 				}
-				
+
 				String[] parts = line.split(",");
 
 				char abbr = parts[0].trim().charAt(0); // the abbreviation for the room
 				String roomName = parts[1].trim();
 				rooms.put(abbr, roomName);
-				
+
 				// see if drawing coordinates for the name were included
 				if (parts.length > 2) {
 					int x = Integer.parseInt(parts[2].trim());
@@ -380,6 +380,9 @@ public class Board extends JComponent {
 		}
 
 		for (String room : rooms.values()) {
+			if (room.equals("Walkway") || room.equals("Closet"))
+				continue;
+
 			cards.add(new Card(room, CardType.ROOM));
 		}
 	}
