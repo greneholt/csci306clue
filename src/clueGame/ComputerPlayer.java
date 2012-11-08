@@ -20,7 +20,7 @@ public class ComputerPlayer extends Player {
 		// look for a room in the targets
 		for (BoardCell target : targets) {
 			// if its a room that wasn't the last one visited, choose it
-			if (target.isRoom() && target.getInitial() != lastRoomVisited) {
+			if (target.isRoom() && ((RoomCell) target).getInitial() != lastRoomVisited) {
 				return target;
 			}
 		}

@@ -60,7 +60,8 @@ public class Board extends JPanel {
 	}
 
 	public void deal() {
-		if (players.size() == 0) return;
+		if (players.size() == 0)
+			return;
 
 		List<Card> deck = new LinkedList<Card>(cards); // duplicate the cards list for dealing
 		Collections.shuffle(deck);
@@ -231,42 +232,64 @@ public class Board extends JPanel {
 	}
 
 	private void loadBoard(String boardFile) throws BadConfigFormatException, IOException {
+		numRows = 0;
+		numColumns = -1;
+		String[] spaces;
 		FileReader reader = new FileReader(boardFile);
 		Scanner scan = new Scanner(reader);
-		// populate cell list
-		int j = 0;
-		while (scan.hasNext()) {
-			String wholeString = scan.nextLine();
-			if (!wholeString.contains(",")) {
-				throw new BadConfigFormatException();
+		while (scan.hasNextLine()) {
+			spaces = scan.nextLine().split(",");
+
+			// if the number of columns changes, the file is invalid
+			if (numColumns != -1 && numColumns != spaces.length) {
+				throw new BadConfigFormatException("Inconsistent number of spaces in row " + numRows);
 			}
-			String[] strArr = wholeString.split(",");
-			for (int i = 0; i < strArr.length; i++) {
-				String str = strArr[i];
-				if (str.equalsIgnoreCase("W")) {
-					WalkwayCell wc = new WalkwayCell();
-					wc.setCol(i);
-					wc.setRow(j);
-					wc.setBoardWidth(strArr.length);
-					cells.add(wc);
+
+			numColumns = spaces.length;
+
+			for (int i = 0; i < numColumns; i++) {
+				String space = spaces[i];
+				if (space.equalsIgnoreCase("W")) {
+					cells.add(new WalkwayCell(numRows, i, calcIndex(numRows, i)));
 				} else {
-					RoomCell rc = new RoomCell();
-					if (str.length() == 2) {
-						char d = str.charAt(1);
-						rc.setDoorDirection(d);
+					if (space.length() > 0 && space.length() <= 2) {
+						char initial = space.charAt(0);
+
+						if (!rooms.containsKey(initial)) {
+							throw new BadConfigFormatException("Invalid room initial '" + initial + '"');
+						}
+
+						DoorDirection direction = DoorDirection.NONE;
+
+						if (space.length() > 1) {
+							switch (space.charAt(1)) {
+							case 'R':
+								direction = DoorDirection.RIGHT;
+								break;
+							case 'L':
+								direction = DoorDirection.LEFT;
+								break;
+							case 'U':
+								direction = DoorDirection.UP;
+								break;
+							case 'D':
+								direction = DoorDirection.DOWN;
+								break;
+							default:
+								throw new BadConfigFormatException("Invalid room direction '" + space.charAt(1) + "'");
+							}
+						}
+
+						cells.add(new RoomCell(numRows, i, calcIndex(numRows, i), initial, direction));
+					} else {
+						throw new BadConfigFormatException("Wrong length of room '" + space + "'");
 					}
-					rc.setCol(i);
-					rc.setRow(j);
-					rc.setBoardWidth(strArr.length);
-					rc.setRoom(str.charAt(0));
-					cells.add(rc);
 				}
 			}
-			numColumns = strArr.length;
-			++j;
-		}
-		numRows = j;
 
+			numRows++;
+		}
+		
 		scan.close();
 		reader.close();
 	}
@@ -311,7 +334,7 @@ public class Board extends JPanel {
 			System.out.println("I'm sorry, but the " + legendFile + " file is a figment of your imagination.");
 			System.out.println(e.getMessage());
 		}
-		
+
 		for (String room : rooms.values()) {
 			cards.add(new Card(room, CardType.ROOM));
 		}
