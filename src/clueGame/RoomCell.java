@@ -39,10 +39,31 @@ public class RoomCell extends BoardCell {
 
 	@Override
 	public void draw(Graphics2D g2d, float cellWidth, float cellHeight) {
-		float x = cellWidth * getColumn();
-		float y = cellHeight * getRow();
+		float x = cellWidth * getColumn() + 1;
+		float y = cellHeight * getRow() + 1;
 		g2d.setColor(new Color(0xdddddd));
-		Rectangle2D.Float rect = new Rectangle2D.Float(x + 1, y + 1, cellWidth, cellHeight);
+		Rectangle2D.Float rect = new Rectangle2D.Float(x, y, cellWidth, cellHeight);
 		g2d.fill(rect);
+		
+		if (isDoorway()) {
+			g2d.setColor(new Color(0x008597));
+			switch (doorDirection) {
+			case UP:
+				rect = new Rectangle2D.Float(x, y, cellWidth - 1, DOOR_SIZE);
+				break;
+			case DOWN:
+				rect = new Rectangle2D.Float(x, y + cellHeight - DOOR_SIZE - 1, cellWidth - 1, DOOR_SIZE + 1);
+				break;
+			case RIGHT:
+				rect = new Rectangle2D.Float(x + cellWidth - DOOR_SIZE - 1, y, DOOR_SIZE + 1, cellHeight - 1);
+				break;
+			case LEFT:
+				rect = new Rectangle2D.Float(x, y, DOOR_SIZE, cellHeight - 1);
+				break;
+			}
+			g2d.fill(rect);
+		}
 	}
+	
+	private static final int DOOR_SIZE = 4;
 }
