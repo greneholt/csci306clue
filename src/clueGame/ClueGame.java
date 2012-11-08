@@ -55,6 +55,7 @@ public class ClueGame extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				DetectivePanel detective = new DetectivePanel(board);
 				add(detective, BorderLayout.EAST);
+				setSize(new Dimension(1100, 600));
 			}
 		});
 		
