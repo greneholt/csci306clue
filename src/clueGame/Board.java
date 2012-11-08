@@ -251,6 +251,11 @@ public class Board extends JComponent {
 			float y = cellHeight * label.getKey().y + cellHeight/2;
 			g2d.drawString(label.getValue(), x, y);
 		}
+		
+		// Draw players
+		for (Player p : players) {
+			p.draw(g2d, cellWidth, cellHeight, numRows, numColumns);
+		}
 	}
 
 	public void selectAnswer() {

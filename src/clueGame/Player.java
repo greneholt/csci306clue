@@ -1,6 +1,9 @@
 package clueGame;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -74,5 +77,16 @@ public class Player {
 		} else {
 			return null;
 		}
+	}
+	
+	public void draw(Graphics2D g2d, float cellWidth, float cellHeight, int numRows, int numCols) {
+		float x = cellWidth * (cellIndex % numCols);
+		float y = cellHeight * ((cellIndex-(cellIndex % numCols)) / numCols);
+		g2d.setColor(pieceColor);
+		Ellipse2D.Float circle = new Ellipse2D.Float(x, y, cellWidth, cellHeight); 
+		g2d.fill(circle);
+		g2d.setColor(new Color(0x000000));
+		circle = new Ellipse2D.Float(x, y, cellWidth, cellHeight);
+		g2d.draw(circle);
 	}
 }
