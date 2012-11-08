@@ -1,7 +1,7 @@
 C, Conservatory, 0, 2
 K, Kitchen, 2, 19
 B, Ballroom, 2, 10
-R, Billiard room, 7, 2
+R, Billiard Room, 7, 2
 L, Library, 14, 2
 S, Study, 20, 2
 D, Dining room, 10, 18

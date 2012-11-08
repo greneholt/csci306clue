@@ -41,7 +41,7 @@ public class RoomCell extends BoardCell {
 	public void draw(Graphics2D g2d, float cellWidth, float cellHeight) {
 		float x = cellWidth * getColumn() + 1;
 		float y = cellHeight * getRow() + 1;
-		g2d.setColor(new Color(0xEEEEEE));
+		g2d.setColor(new Color(0xF5F5EE));
 		Rectangle2D.Float rect = new Rectangle2D.Float(x, y, cellWidth, cellHeight);
 		g2d.fill(rect);
 		
