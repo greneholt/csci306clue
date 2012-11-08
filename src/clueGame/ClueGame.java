@@ -50,7 +50,7 @@ public class ClueGame extends JFrame {
 				System.exit(0);
 			}
 		});
-		JMenuItem notes = new JMenuItem("Notes");
+		JMenuItem notes = new JMenuItem("Detective Notes");
 		notes.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
