@@ -49,8 +49,17 @@ public class ClueGame extends JFrame {
 				System.exit(0);
 			}
 		});
+		JMenuItem notes = new JMenuItem("Notes");
+		notes.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				DetectivePanel detective = new DetectivePanel(board);
+				add(detective, BorderLayout.EAST);
+			}
+		});
 		
 		JMenu menu = new JMenu("File");
+		menu.add(notes);
 		menu.add(item);
 		menuBar = new JMenuBar();
 		menuBar.add(menu);
