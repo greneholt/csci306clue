@@ -13,15 +13,18 @@ public class DetectivePanel extends JPanel {
 	private JComboBox personGuess, weaponGuess, roomGuess;
 	private List<Card> cardDeck;
 	
-	public DetectivePanel() {
+	public DetectivePanel(Board board) {
 		super();
 		
+		cardDeck = board.getCards();
 		// TODO: Change the size
 		setSize(new Dimension(800, 800));
 		setMinimumSize(new Dimension(500, 500));
 		
 		// Pull in the card names and associate with checkboxes
-		
+		peopleCB = loadCheckBoxes(Card.CardType.PERSON);
+		weaponsCB = loadCheckBoxes(Card.CardType.WEAPON);
+		roomsCB = loadCheckBoxes(Card.CardType.ROOM);
 		// Put these checkboxes into groups
 		
 		// Add appropriate cards to combo boxes
@@ -29,6 +32,17 @@ public class DetectivePanel extends JPanel {
 		weaponGuess = createCardCombo(Card.CardType.WEAPON);
 		roomGuess = createCardCombo(Card.CardType.ROOM);
 		// Put combo boxes into groups
+	}
+	
+	private LinkedList<JCheckBox> loadCheckBoxes(Card.CardType cType) {
+		LinkedList<JCheckBox> boxList = new LinkedList<JCheckBox>();
+		for (Card c : cardDeck) {
+			if(c.getType().equals(cType)) {
+				JCheckBox cBox = new JCheckBox(c.getName());
+				boxList.add(cBox);
+			}
+		}
+		return boxList;
 	}
 	
 	private JComboBox createCardCombo(Card.CardType type) {
