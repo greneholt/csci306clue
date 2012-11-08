@@ -1,8 +1,10 @@
 package clueGame;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -34,6 +36,7 @@ public class Board extends JComponent {
 	private Set<Integer> path = new HashSet<Integer>();
 	private List<Player> players = new ArrayList<Player>(); // contains all players
 	private Map<Character, String> rooms = new TreeMap<Character, String>();
+	private Map<Point, String> labels = new HashMap<Point, String>();
 
 	private CardSet solution;
 
@@ -238,6 +241,16 @@ public class Board extends JComponent {
 		for (BoardCell cell : cells) {
 			cell.draw(g2d, cellWidth, cellHeight);
 		}
+		
+		g2d.setColor(new Color(0x005662));
+		Font font = new Font("Copperplate Gothic Light", Font.PLAIN, 16);
+		font = font.deriveFont(cellWidth/2);
+		g2d.setFont(font);
+		for (Map.Entry<Point, String> label : labels.entrySet()) {
+			float x = cellWidth * label.getKey().x + cellWidth/2;
+			float y = cellHeight * label.getKey().y + cellHeight/2;
+			g2d.drawString(label.getValue(), x, y);
+		}
 	}
 
 	public void selectAnswer() {
@@ -329,7 +342,7 @@ public class Board extends JComponent {
 	}
 
 	private void loadLegend(String legendFile) throws BadConfigFormatException {
-		Pattern legendLine = Pattern.compile("[A-Z],[A-Za-z ]+");
+		Pattern legendLine = Pattern.compile("[A-Z],[A-Za-z ]+(, ?\\d+ ?, ?\\d+ ?)?");
 
 		try {
 			FileReader f = new FileReader(legendFile);
@@ -340,10 +353,19 @@ public class Board extends JComponent {
 				if (!legendLine.matcher(line).matches()) {
 					throw new BadConfigFormatException("Invalid legend line '" + line + "'");
 				}
+				
+				String[] parts = line.split(",");
 
-				char abbr = line.charAt(0); // the abbreviation for the room
-				String room = line.substring(2).trim(); // trim off the abbreviation and comma to get the full name
-				rooms.put(abbr, room);
+				char abbr = parts[0].trim().charAt(0); // the abbreviation for the room
+				String roomName = parts[1].trim();
+				rooms.put(abbr, roomName);
+				
+				// see if drawing coordinates for the name were included
+				if (parts.length > 2) {
+					int x = Integer.parseInt(parts[2].trim());
+					int y = Integer.parseInt(parts[3].trim());
+					labels.put(new Point(x, y), roomName);
+				}
 			}
 		} catch (FileNotFoundException e) {
 			System.out.println("I'm sorry, but the " + legendFile + " file is a figment of your imagination.");
