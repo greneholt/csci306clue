@@ -29,10 +29,11 @@ public class ClueGame extends JFrame {
 		try {
 			board.loadConfigFiles("ClueBoardLegend.txt", "ClueBoardLayout.csv", "weapons.txt", "players.txt");
 		} catch (BadConfigFormatException e) {
-			JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, e.getMessage(), "Config File Invalid", JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(this, e.getMessage(), "IO Exception", JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
 		}
 		
 		add(board, BorderLayout.CENTER);
