@@ -37,7 +37,7 @@ public class BoardInitTests {
 		assertEquals("Conservatory", rooms.get('C'));
 		assertEquals("Kitchen", rooms.get('K'));
 		assertEquals("Ballroom", rooms.get('B'));
-		assertEquals("Billiard room", rooms.get('R'));
+		assertEquals("Billiard Room", rooms.get('R'));
 		assertEquals("Library", rooms.get('L'));
 		assertEquals("Study", rooms.get('S'));
 		assertEquals("Dining room", rooms.get('D'));
