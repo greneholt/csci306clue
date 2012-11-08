@@ -98,21 +98,21 @@ public class DetectivePanel extends JPanel {
 	private class PersonGuessPanel extends JPanel {
 		public PersonGuessPanel() {
 			setBorder(new TitledBorder (new EtchedBorder(), "Guess Person"));
-			add(personGuess, BorderLayout.WEST);
+			add(personGuess, BorderLayout.CENTER);
 		}
 	}
 	
 	private class WeaponGuessPanel extends JPanel {
 		public WeaponGuessPanel() {
 			setBorder(new TitledBorder (new EtchedBorder(), "Guess Weapon"));
-			add(personGuess, BorderLayout.WEST);
+			add(weaponGuess, BorderLayout.CENTER);
 		}
 	}
 	
 	private class RoomGuessPanel extends JPanel {
 		public RoomGuessPanel() {
 			setBorder(new TitledBorder (new EtchedBorder(), "Guess Room"));
-			add(personGuess, BorderLayout.WEST);
+			add(roomGuess, BorderLayout.CENTER);
 		}
 	}
 }
