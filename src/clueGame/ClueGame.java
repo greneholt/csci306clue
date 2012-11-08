@@ -20,7 +20,7 @@ public class ClueGame extends JFrame {
 		super();
 		
 		setTitle("Clue?");
-		setSize(new Dimension(800, 800));
+		setSize(new Dimension(600, 600));
 		setMinimumSize(new Dimension(500, 500));
 		
 		setLayout(new BorderLayout());

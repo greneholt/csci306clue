@@ -42,7 +42,7 @@ public class RoomCell extends BoardCell {
 		float x = cellWidth * getColumn();
 		float y = cellHeight * getRow();
 		g2d.setColor(new Color(0xdddddd));
-		Rectangle2D.Float rect = new Rectangle2D.Float(x, y, cellWidth, cellHeight);
+		Rectangle2D.Float rect = new Rectangle2D.Float(x + 1, y + 1, cellWidth, cellHeight);
 		g2d.fill(rect);
 	}
 }
