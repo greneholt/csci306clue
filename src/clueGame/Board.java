@@ -23,40 +23,35 @@ import clueGame.Card.CardType;
 import clueGame.RoomCell.DoorDirection;
 
 public class Board extends JPanel {
-	private ArrayList<BoardCell> cells = new ArrayList<BoardCell>();
-	private Map<Character, String> rooms = new TreeMap<Character, String>();
 	private Map<Integer, LinkedList<Integer>> adjacencies = new HashMap<Integer, LinkedList<Integer>>();
-	private Set<BoardCell> targets = new HashSet<BoardCell>();
+	private List<Card> cards = new LinkedList<Card>();
+	private ArrayList<BoardCell> cells = new ArrayList<BoardCell>();
+	private HumanPlayer human;
+	private int numColumns;
+	private int numRows;
 	private Set<Integer> path = new HashSet<Integer>();
 	private List<Player> players = new ArrayList<Player>(); // contains all players
-	private HumanPlayer human;
-	private List<Card> cards = new LinkedList<Card>();
+	private Map<Character, String> rooms = new TreeMap<Character, String>();
+
 	private CardSet solution;
 
-	private int numRows;
-
-	private int numColumns;
+	private Set<BoardCell> targets = new HashSet<BoardCell>();
 
 	public int calcIndex(int row, int col) {
 		int index = (row * numColumns) + col;
 		return index;
 	}
 
-	private void calcTargets(int calcIndex, int steps) {
-		for (Integer neighbor : getAdjList(calcIndex)) {
-			if (path.contains(neighbor))
-				continue;
-
-			path.add(neighbor);
-
-			// we include the initial cell in the path, so the path size has to exceed steps by one
-			if (path.size() > steps || getCellAt(neighbor).isDoorway()) {
-				targets.add(getCellAt(neighbor));
-			} else {
-				calcTargets(neighbor, steps);
-			}
-			path.remove(neighbor);
+	public boolean checkAccusation(Card person, Card weapon, Card room) {
+		if (person.equals(solution.getPerson()) && weapon.equals(solution.getWeapon()) && room.equals(solution.getRoom())) {
+			return true;
+		} else {
+			return false;
 		}
+	}
+
+	public void clearPlayers() {
+		players.clear();
 	}
 
 	public void deal() {
@@ -73,6 +68,26 @@ public class Board extends JPanel {
 			players.get(i).giveCard(card);
 
 			i = (i + 1) % players.size();
+		}
+	}
+
+	public Card disproveSuggestion(Player from, Card person, Card weapon, Card room) {
+		List<Card> foundCards = new LinkedList<Card>();
+
+		for (Player player : players) {
+			if (player != from) {
+				Card card = player.disproveSuggestion(person, weapon, room);
+				if (card != null) {
+					foundCards.add(card);
+				}
+			}
+		}
+
+		if (foundCards.size() > 0) {
+			Random rand = new Random();
+			return foundCards.get(rand.nextInt(foundCards.size()));
+		} else {
+			return null;
 		}
 	}
 
@@ -203,31 +218,35 @@ public class Board extends JPanel {
 		return targets;
 	}
 
-	public boolean checkAccusation(Card person, Card weapon, Card room) {
-		if (person.equals(solution.getPerson()) && weapon.equals(solution.getWeapon()) && room.equals(solution.getRoom())) {
-			return true;
-		} else {
-			return false;
-		}
+	public void loadConfigFiles(String legendFile, String boardFile, String weaponsFile, String playersFile) throws BadConfigFormatException, IOException {
+		loadLegend(legendFile);
+		loadBoard(boardFile);
+		loadPlayers(playersFile);
+		loadWeapons(weaponsFile);
 	}
 
-	public Card disproveSuggestion(Player from, Card person, Card weapon, Card room) {
-		List<Card> foundCards = new LinkedList<Card>();
+	public void selectAnswer() {
 
-		for (Player player : players) {
-			if (player != from) {
-				Card card = player.disproveSuggestion(person, weapon, room);
-				if (card != null) {
-					foundCards.add(card);
-				}
+	}
+
+	public void setSolution(CardSet solution) {
+		this.solution = solution;
+	}
+
+	private void calcTargets(int calcIndex, int steps) {
+		for (Integer neighbor : getAdjList(calcIndex)) {
+			if (path.contains(neighbor))
+				continue;
+
+			path.add(neighbor);
+
+			// we include the initial cell in the path, so the path size has to exceed steps by one
+			if (path.size() > steps || getCellAt(neighbor).isDoorway()) {
+				targets.add(getCellAt(neighbor));
+			} else {
+				calcTargets(neighbor, steps);
 			}
-		}
-
-		if (foundCards.size() > 0) {
-			Random rand = new Random();
-			return foundCards.get(rand.nextInt(foundCards.size()));
-		} else {
-			return null;
+			path.remove(neighbor);
 		}
 	}
 
@@ -294,25 +313,6 @@ public class Board extends JPanel {
 		reader.close();
 	}
 
-	private void loadWeapons(String weaponsFile) throws IOException {
-		FileReader reader = new FileReader(weaponsFile);
-		Scanner scan = new Scanner(reader);
-
-		while (scan.hasNextLine()) {
-			cards.add(new Card(scan.nextLine(), CardType.WEAPON));
-		}
-
-		scan.close();
-		reader.close();
-	}
-
-	public void loadConfigFiles(String legendFile, String boardFile, String weaponsFile, String playersFile) throws BadConfigFormatException, IOException {
-		loadLegend(legendFile);
-		loadBoard(boardFile);
-		loadPlayers(playersFile);
-		loadWeapons(weaponsFile);
-	}
-
 	private void loadLegend(String legendFile) throws BadConfigFormatException {
 		Pattern legendLine = Pattern.compile("[A-Z],[A-Za-z ]+");
 
@@ -340,6 +340,16 @@ public class Board extends JPanel {
 		}
 	}
 
+	private void loadPlayer(Player player, Scanner scan) throws BadConfigFormatException {
+		String[] line = scan.nextLine().split(",");
+		if (line.length != 3) {
+			throw new BadConfigFormatException("Wrong number of values in line " + line + " of players file");
+		}
+		player.setName(line[0]);
+		player.setPieceColor(Color.decode(line[1]));
+		player.setCellIndex(Integer.parseInt(line[2]));
+	}
+
 	private void loadPlayers(String playersFile) throws BadConfigFormatException, IOException {
 		clearPlayers();
 		FileReader reader = new FileReader(playersFile);
@@ -361,25 +371,15 @@ public class Board extends JPanel {
 		}
 	}
 
-	private void loadPlayer(Player player, Scanner scan) throws BadConfigFormatException {
-		String[] line = scan.nextLine().split(",");
-		if (line.length != 3) {
-			throw new BadConfigFormatException("Wrong number of values in line " + line + " of players file");
+	private void loadWeapons(String weaponsFile) throws IOException {
+		FileReader reader = new FileReader(weaponsFile);
+		Scanner scan = new Scanner(reader);
+
+		while (scan.hasNextLine()) {
+			cards.add(new Card(scan.nextLine(), CardType.WEAPON));
 		}
-		player.setName(line[0]);
-		player.setPieceColor(Color.decode(line[1]));
-		player.setCellIndex(Integer.parseInt(line[2]));
-	}
 
-	public void clearPlayers() {
-		players.clear();
-	}
-
-	public void selectAnswer() {
-
-	}
-
-	public void setSolution(CardSet solution) {
-		this.solution = solution;
+		scan.close();
+		reader.close();
 	}
 }
