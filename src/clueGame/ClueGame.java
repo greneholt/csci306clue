@@ -15,7 +15,7 @@ import javax.swing.JOptionPane;
 public class ClueGame extends JFrame {
 	private JMenuBar menuBar;
 	private Board board;
-	private DetectivePanel detective;
+	private DetectiveDialog detective;
 	
 	public ClueGame() {
 		super();
@@ -55,9 +55,10 @@ public class ClueGame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(detective == null) {
-					detective = new DetectivePanel(board);
+					detective = new DetectiveDialog(board);
 					add(detective, BorderLayout.EAST);
-					setSize(new Dimension(1100, 600));
+				} else {
+					detective.setVisible(true);
 				}
 			}
 		});
