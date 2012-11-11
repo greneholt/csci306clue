@@ -16,6 +16,7 @@ public class ClueGame extends JFrame {
 	private JMenuBar menuBar;
 	private Board board;
 	private DetectiveDialog detective;
+	private CardDisplayPanel humanCards;
 	
 	public ClueGame() {
 		super();
@@ -26,6 +27,7 @@ public class ClueGame extends JFrame {
 		
 		setLayout(new BorderLayout());
 		board = new Board();
+		//humanCards = new CardDisplayPanel(board);
 		
 		try {
 			board.loadConfigFiles("ClueBoardLegend.txt", "ClueBoardLayout.csv", "weapons.txt", "players.txt");
@@ -38,6 +40,7 @@ public class ClueGame extends JFrame {
 		}
 		
 		add(board, BorderLayout.CENTER);
+		//add(humanCards, BorderLayout.EAST);
 		
 		buildMenu();
 	}
@@ -56,7 +59,6 @@ public class ClueGame extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				if(detective == null) {
 					detective = new DetectiveDialog(board);
-					add(detective, BorderLayout.EAST);
 				} else {
 					detective.setVisible(true);
 				}
