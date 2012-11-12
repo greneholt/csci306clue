@@ -27,6 +27,7 @@ public class ClueGame extends JFrame {
 		
 		setLayout(new BorderLayout());
 		board = new Board();
+		//board.deal();
 		//humanCards = new CardDisplayPanel(board);
 		
 		try {
