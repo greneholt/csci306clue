@@ -27,7 +27,6 @@ public class ClueGame extends JFrame {
 		
 		setLayout(new BorderLayout());
 		board = new Board();
-		//humanCards = new CardDisplayPanel(board);
 		
 		try {
 			board.loadConfigFiles("ClueBoardLegend.txt", "ClueBoardLayout.csv", "weapons.txt", "players.txt");
@@ -39,8 +38,12 @@ public class ClueGame extends JFrame {
 			System.exit(1);
 		}
 		
+		board.deal();
+		
+		humanCards = new CardDisplayPanel(board);
+		
 		add(board, BorderLayout.CENTER);
-		//add(humanCards, BorderLayout.EAST);
+		add(humanCards, BorderLayout.EAST);
 		
 		buildMenu();
 	}
