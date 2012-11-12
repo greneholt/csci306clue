@@ -16,7 +16,8 @@ public class ClueGame extends JFrame {
 	private JMenuBar menuBar;
 	private Board board;
 	private DetectiveDialog detective;
-	private CardDisplayPanel humanCards;
+	private CardDisplayPanel cardDisplay;
+	private GameControlPanel gameControl;
 	
 	public ClueGame() {
 		super();
@@ -27,9 +28,7 @@ public class ClueGame extends JFrame {
 		
 		setLayout(new BorderLayout());
 		board = new Board();
-		//board.deal();
-		//humanCards = new CardDisplayPanel(board);
-		
+
 		try {
 			board.loadConfigFiles("ClueBoardLegend.txt", "ClueBoardLayout.csv", "weapons.txt", "players.txt");
 		} catch (BadConfigFormatException e) {
@@ -40,8 +39,14 @@ public class ClueGame extends JFrame {
 			System.exit(1);
 		}
 		
+		board.deal();
+		
+		cardDisplay = new CardDisplayPanel(board);
+		gameControl = new GameControlPanel(board);
+		
 		add(board, BorderLayout.CENTER);
-		//add(humanCards, BorderLayout.EAST);
+		add(cardDisplay, BorderLayout.EAST);
+		add(gameControl, BorderLayout.SOUTH);
 		
 		buildMenu();
 	}

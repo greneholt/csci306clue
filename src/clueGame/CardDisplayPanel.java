@@ -10,7 +10,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 public class CardDisplayPanel extends JPanel {
-	private Set<Card> humanCards = new HashSet<Card>();
+	private Set<Card> humanCards;
 	
 	public CardDisplayPanel(Board board) {
 		super();
@@ -36,20 +36,19 @@ public class CardDisplayPanel extends JPanel {
 				return;
 			
 			setLayout(new GridLayout(0,1));
-			ArrayList<JTextField> cards = loadHumanCards(type);
-			for(JTextField tf : cards) {
+			ArrayList<JLabel> cards = loadHumanCards(type);
+			for(JLabel tf : cards) {
 				add(tf);
 			}
 		}
 	}
 	
-	public ArrayList<JTextField> loadHumanCards(Card.CardType type){
-		ArrayList<JTextField> list = new ArrayList<JTextField>();
+	public ArrayList<JLabel> loadHumanCards(Card.CardType type){
+		ArrayList<JLabel> list = new ArrayList<JLabel>();
 		for(Card c : humanCards) {
 			if(c.getType().equals(type)) {
-				JTextField cField = new JTextField();
+				JLabel cField = new JLabel();
 				cField.setText(c.getName());
-				cField.setEditable(false);
 				list.add(cField);
 			}
 		}
