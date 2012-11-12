@@ -16,7 +16,8 @@ public class ClueGame extends JFrame {
 	private JMenuBar menuBar;
 	private Board board;
 	private DetectiveDialog detective;
-	private CardDisplayPanel humanCards;
+	private CardDisplayPanel cardDisplay;
+	private GameControlPanel gameControl;
 	
 	public ClueGame() {
 		super();
@@ -40,10 +41,12 @@ public class ClueGame extends JFrame {
 		
 		board.deal();
 		
-		humanCards = new CardDisplayPanel(board);
+		cardDisplay = new CardDisplayPanel(board);
+		gameControl = new GameControlPanel(board);
 		
 		add(board, BorderLayout.CENTER);
-		add(humanCards, BorderLayout.EAST);
+		add(cardDisplay, BorderLayout.EAST);
+		add(gameControl, BorderLayout.SOUTH);
 		
 		buildMenu();
 	}
