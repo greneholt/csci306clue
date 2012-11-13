@@ -41,7 +41,7 @@ public class ClueGame extends JFrame {
 		
 		board.deal();
 		
-		cardDisplay = new CardDisplayPanel(board);
+		cardDisplay = new CardDisplayPanel(board.getHuman().getCards());
 		gameControl = new GameControlPanel(board);
 		
 		add(board, BorderLayout.CENTER);
@@ -49,6 +49,11 @@ public class ClueGame extends JFrame {
 		add(gameControl, BorderLayout.SOUTH);
 		
 		buildMenu();
+	}
+	
+	public void startGame() {
+		Player human = board.getHuman();
+		JOptionPane.showMessageDialog(this, "You are " + human.getName() + ", press Next player to begin play", "Welcome to Clue", JOptionPane.INFORMATION_MESSAGE);
 	}
 	
 	private void buildMenu() {
@@ -86,8 +91,9 @@ public class ClueGame extends JFrame {
 			// the program isn't running on a Mac
 		}
 		
-		ClueGame gui = new ClueGame();
-		gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		gui.setVisible(true);
+		ClueGame game = new ClueGame();
+		game.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		game.setVisible(true);
+		game.startGame();
 	}
 }

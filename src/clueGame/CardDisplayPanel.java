@@ -12,10 +12,10 @@ import javax.swing.border.TitledBorder;
 public class CardDisplayPanel extends JPanel {
 	private Set<Card> humanCards;
 	
-	public CardDisplayPanel(Board board) {
+	public CardDisplayPanel(Set<Card> humanCards) {
 		super();
 		setLayout(new GridLayout(0,1));
-		humanCards = board.getHuman().getCards();
+		this.humanCards = humanCards;
 		JLabel label = new JLabel("My Cards:");
 		add(label);
 		add(new CardPanel(Card.CardType.PERSON));
