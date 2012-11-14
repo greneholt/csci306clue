@@ -42,7 +42,7 @@ public class ClueGame extends JFrame {
 		board.deal();
 		
 		cardDisplay = new CardDisplayPanel(board.getHuman().getCards());
-		gameControl = new GameControlPanel(board);
+		gameControl = new GameControlPanel(board, this);
 		
 		add(board, BorderLayout.CENTER);
 		add(cardDisplay, BorderLayout.EAST);
@@ -54,6 +54,10 @@ public class ClueGame extends JFrame {
 	public void startGame() {
 		Player human = board.getHuman();
 		JOptionPane.showMessageDialog(this, "You are " + human.getName() + ", press Next player to begin play", "Welcome to Clue", JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	public void nextPlayer() {
+		
 	}
 	
 	private void buildMenu() {

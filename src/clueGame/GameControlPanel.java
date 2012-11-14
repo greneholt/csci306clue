@@ -4,6 +4,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -12,7 +14,11 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 public class GameControlPanel extends JPanel {
-	public GameControlPanel(Board board) {
+	private ClueGame game;
+	
+	public GameControlPanel(Board board, ClueGame clueGame) {
+		this.game = clueGame;
+		
 		GridBagLayout gridBag = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
 
@@ -32,6 +38,12 @@ public class GameControlPanel extends JPanel {
 		add(turnPanel);
 
 		JButton nextPlayerButton = new JButton("Next player");
+		nextPlayerButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				game.nextPlayer();
+			}
+		});
 		c.weightx = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		gridBag.setConstraints(nextPlayerButton, c);
