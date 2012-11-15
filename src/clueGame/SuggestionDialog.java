@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -17,7 +19,7 @@ public class SuggestionDialog extends JDialog {
 	private List<Card> cardDeck;
 	
 	
-	public SuggestionDialog(String room, List<Card> cards) {
+	public SuggestionDialog(final String room, List<Card> cards, GameControlPanel ctrl) {
 		setModalityType(ModalityType.APPLICATION_MODAL);
 		setLayout(new GridLayout(0,2));
 		
@@ -35,7 +37,7 @@ public class SuggestionDialog extends JDialog {
 		submitButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO:
+				
 			}
 		});
 		cancelButton.addActionListener(new ActionListener() {
