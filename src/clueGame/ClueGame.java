@@ -25,6 +25,9 @@ public class ClueGame extends JFrame {
 
 	private boolean madeMove;
 	private boolean madeSuggestion;
+	private boolean madeAccusation;
+	private CardSet accusation;
+	private boolean correctAccusation;
 	private int dieRoll;
 	
 	private static final Random rand = new Random();
@@ -78,7 +81,7 @@ public class ClueGame extends JFrame {
 			BoardCell currentCell = board.getCellAt(currentPlayer.getCellIndex()); 
 			
 			if (currentPlayer == board.getHuman()) {
-				if (!madeMove && !madeSuggestion) {
+				if (!madeMove && !madeSuggestion && !madeAccusation) {
 					JOptionPane.showMessageDialog(this, "You have not made a move or a suggestion yet", "Cannot continue", JOptionPane.WARNING_MESSAGE);
 					return;
 				}
@@ -127,6 +130,7 @@ public class ClueGame extends JFrame {
 				board.clearTargets();
 			}
 		}
+		madeAccusation = false;
 	}
 
 	private void computerTurn() {
@@ -150,6 +154,45 @@ public class ClueGame extends JFrame {
 			
 			CardSet suggestion = computer.createSuggestion(room, board.getCards());
 			handleSuggestion(suggestion);
+		}
+	}
+	
+	public void makeAccusation() {
+		if(currentPlayer.equals(board.getHuman())) {
+			AccusationDialog dialog = new AccusationDialog(this, board.getCards());
+			CardSet accusation = dialog.prompt();
+			if (accusation == null) {
+				return;
+			}
+			correctAccusation = handleAccusation(accusation);
+			madeAccusation = true;
+			this.accusation = accusation;
+			
+			if (madeAccusation) {
+				if (correctAccusation) {
+					JOptionPane.showMessageDialog(this, "You have won. It was " + accusation, "Player Won", JOptionPane.INFORMATION_MESSAGE);
+					System.exit(0);
+				} else {
+					JOptionPane.showMessageDialog(this, accusation + ": This is incorrect.", "Incorrect", JOptionPane.INFORMATION_MESSAGE);
+				}
+				
+			}
+			
+			board.clearTargets();
+		} else {
+			JOptionPane.showMessageDialog(this, "You can't make an accusation when it is not your turn.", "Accusing Out of Order", JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
+	}
+	
+	private boolean handleAccusation(CardSet accusation) {
+		if (accusation == null) {
+			return false;
+		}
+		if(board.checkAccusation(accusation.getPerson(), accusation.getWeapon(), accusation.getRoom())) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 

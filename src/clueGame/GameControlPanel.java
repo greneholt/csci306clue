@@ -50,6 +50,12 @@ public class GameControlPanel extends JPanel {
 		add(nextPlayerButton);
 
 		JButton makeAccusationButton = new JButton("Make an accusation");
+		makeAccusationButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				game.makeAccusation();
+			}
+		});
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		gridBag.setConstraints(makeAccusationButton, c);
 		add(makeAccusationButton);

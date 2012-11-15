@@ -18,14 +18,11 @@ public class AccusationDialog extends JDialog {
 	private JButton submitButton, cancelButton;
 	private List<Card> cardDeck;
 	private boolean submitted;
-	private String room;
 	
-	public AccusationDialog(Window parent, String room, List<Card> cards) {
+	public AccusationDialog(Window parent, List<Card> cards) {
 		super(parent, Dialog.DEFAULT_MODALITY_TYPE);
 		setLayout(new GridLayout(0,2));
 		setMinimumSize(new Dimension(300, 300));
-		
-		this.room = room;
 		
 		cardDeck = cards;
 		personGuess = loadComboBox(Card.CardType.PERSON);
@@ -88,7 +85,7 @@ public class AccusationDialog extends JDialog {
 				else if (card.getName().equals(weaponGuess.getSelectedItem().toString())) {
 					weapon = card;
 				}
-				else if (card.getName().equals(this.room)) {
+				else if (card.getName().equals(roomGuess.getSelectedItem().toString())) {
 					room = card;
 				}
 			}
