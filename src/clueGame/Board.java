@@ -373,7 +373,16 @@ public class Board extends JComponent {
 
 			// we include the initial cell in the path, so the path size has to exceed steps by one
 			if (path.size() > steps || getCellAt(neighbor).isDoorway()) {
-				targets.add(getCellAt(neighbor));
+				boolean occupied = false;
+				for (Player player : players) {
+					if (player.getCellIndex() == neighbor) {
+						occupied = true;
+						break;
+					}
+				}
+				if (!occupied) {
+					targets.add(getCellAt(neighbor));
+				}
 			} else {
 				calcTargets(targets, neighbor, steps);
 			}

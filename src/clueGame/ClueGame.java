@@ -115,6 +115,10 @@ public class ClueGame extends JFrame {
 			
 			if (currentCell.isRoom() && ((RoomCell)currentCell).getInitial() != currentPlayer.getLastRoomVisited()) {
 				playerMadeSuggestion(((RoomCell)currentCell).getInitial());
+				
+				if (madeSuggestion) {
+					board.clearTargets();
+				}
 			}
 		}
 		else {
@@ -168,7 +172,11 @@ public class ClueGame extends JFrame {
 		String roomName = board.getRooms().get(roomInitial);
 		SuggestionDialog dialog = new SuggestionDialog(this, roomName, board.getCards());
 		CardSet suggestion = dialog.prompt();
+		if (suggestion == null) {
+			return;
+		}
 		handleSuggestion(suggestion);
+		madeSuggestion = true;
 	}
 	
 	private void buildMenu() {
