@@ -101,4 +101,10 @@ public class GameControlPanel extends JPanel {
 	public void setGuessLabel(JLabel guessLabel) {
 		this.guessLabel = guessLabel;
 	}
+
+
+	public void updateSuggestion(CardSet suggestion, Card result) {
+		guessLabel.setText(suggestion.toString());
+		responseLabel.setText(result.getName());
+	}
 }
