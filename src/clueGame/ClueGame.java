@@ -147,6 +147,18 @@ public class ClueGame extends JFrame {
 	}
 
 	private Card handleSuggestion(CardSet suggestion) {
+		if (suggestion == null) {
+			return null;
+		}
+		
+		for (Player player : board.getPlayers()) {
+			if (player.getName().equals(suggestion.getPerson().getName())) {
+				player.setCellIndex(currentPlayer.getCellIndex());
+				board.repaint();
+				break;
+			}
+		}
+		
 		Card result = board.disproveSuggestion(currentPlayer, suggestion.getPerson(), suggestion.getWeapon(), suggestion.getRoom());
 		gameControl.updateSuggestion(suggestion, result);
 		return result;
