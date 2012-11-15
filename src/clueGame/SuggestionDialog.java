@@ -1,6 +1,5 @@
 package clueGame;
 
-import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.GridLayout;
 import java.awt.Window;
