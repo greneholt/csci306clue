@@ -1,6 +1,7 @@
 package clueGame;
 
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -22,6 +23,7 @@ public class SuggestionDialog extends JDialog {
 	public SuggestionDialog(Window parent, String room, List<Card> cards) {
 		super(parent, Dialog.DEFAULT_MODALITY_TYPE);
 		setLayout(new GridLayout(0,2));
+		setMinimumSize(new Dimension(300, 300));
 		
 		this.room = room;
 		
