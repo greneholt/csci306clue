@@ -95,4 +95,8 @@ public class GameControlPanel extends JPanel {
 	private JLabel dieRollLabel;
 	private JLabel guessLabel;
 	private JLabel responseLabel;
+	
+	public void setGuessLabel(JLabel guessLabel) {
+		this.guessLabel = guessLabel;
+	}
 }
