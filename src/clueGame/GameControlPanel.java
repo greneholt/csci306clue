@@ -101,6 +101,9 @@ public class GameControlPanel extends JPanel {
 		if (result != null) {
 			responseLabel.setText(result.getName());
 		}
+		else {
+			responseLabel.setText("No new clue");
+		}
 	}
 	
 	public void updateDiceRoll(int dieRoll) {
