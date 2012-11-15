@@ -6,6 +6,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -38,10 +40,54 @@ public class Board extends JComponent {
 	private List<Player> players = new ArrayList<Player>(); // contains all players
 	private Map<Character, String> rooms = new TreeMap<Character, String>();
 	private Map<Point, String> labels = new HashMap<Point, String>();
-
 	private CardSet solution;
-
 	private Set<BoardCell> displayTargets;
+	private ClueGame game;
+	
+	public Board() {
+		super();
+		addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				// do nothing
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				// do nothing
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+				// do nothing
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				// do nothing
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (game != null) {
+					float cellWidth = (float) getWidth() / numColumns;
+					float cellHeight = (float) getHeight() / numRows;
+					
+					int x = (int)Math.floor(e.getX() / cellWidth);
+					int y = (int)Math.floor(e.getY() / cellHeight);
+					
+					BoardCell cell = getCellAt(y, x);
+					
+					game.cellClicked(cell);
+				}
+			}
+		});
+	}
+	
+	public void setClueGame(ClueGame clueGame) {
+		game = clueGame;
+	}
 	
 	public int calcIndex(int row, int col) {
 		int index = (row * numColumns) + col;
@@ -129,6 +175,11 @@ public class Board extends JComponent {
 
 	public void displayTargets(Set<BoardCell> targets) {
 		displayTargets = targets;
+		repaint();
+	}
+	
+	public void clearTargets() {
+		displayTargets = null;
 		repaint();
 	}
 

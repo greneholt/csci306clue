@@ -28,6 +28,7 @@ public class ClueGame extends JFrame {
 	private int dieRoll;
 	
 	private static final Random rand = new Random();
+	private Set<BoardCell> targets;
 	
 	public Player getCurrentPlayer() {
 		return currentPlayer;
@@ -37,11 +38,12 @@ public class ClueGame extends JFrame {
 		super();
 		
 		setTitle("Have you got a clue?");
-		setSize(new Dimension(600, 600));
+		setSize(new Dimension(700, 700));
 		setMinimumSize(new Dimension(500, 500));
 		
 		setLayout(new BorderLayout());
 		board = new Board();
+		board.setClueGame(this);
 
 		try {
 			board.loadConfigFiles("ClueBoardLegend.txt", "ClueBoardLayout.csv", "weapons.txt", "players.txt");
@@ -99,9 +101,12 @@ public class ClueGame extends JFrame {
 		madeMove = false;
 		madeSuggestion = false;
 		
-		dieRoll = rand.nextInt(6) + 1;
+		gameControl.updateCurrentPlayer(currentPlayer);
 		
-		Set<BoardCell> targets = board.getTargets(currentPlayer.getCellIndex(), dieRoll);
+		dieRoll = rand.nextInt(6) + 1;
+		gameControl.updateDiceRoll(dieRoll);
+		
+		targets = board.getTargets(currentPlayer.getCellIndex(), dieRoll);
 		
 		BoardCell currentCell = board.getCellAt(currentPlayer.getCellIndex());
 		
@@ -144,7 +149,7 @@ public class ClueGame extends JFrame {
 	}
 	
 	public void playerMadeSuggestion() {
-		// show the suggestion dialog
+		JOptionPane.showMessageDialog(this, "Make a suggestion", "Do it!", JOptionPane.INFORMATION_MESSAGE);
 	}
 	
 	private void buildMenu() {
@@ -179,12 +184,31 @@ public class ClueGame extends JFrame {
 		try {
 			System.setProperty("apple.laf.useScreenMenuBar", "true");
 		} catch (Exception e) {
-			// the program isn't running on a Mac
+			// the program isn't running on a Mac, too bad for them
 		}
 		
 		ClueGame game = new ClueGame();
 		game.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		game.setVisible(true);
 		game.startGame();
+	}
+
+	public void cellClicked(BoardCell cell) {
+		if (targets.contains(cell)) {
+			moveHumanPlayer(cell);
+		}
+		else {
+			JOptionPane.showMessageDialog(this, "Invalid target", "Invalid target", JOptionPane.WARNING_MESSAGE);
+		}
+	}
+
+	private void moveHumanPlayer(BoardCell cell) {
+		madeMove = true;
+		currentPlayer.setCellIndex(cell.getIndex());
+		board.clearTargets();
+		board.repaint();
+		if (cell.isRoom()) {
+			playerMadeSuggestion();
+		}
 	}
 }

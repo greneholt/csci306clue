@@ -17,7 +17,7 @@ public class GameControlPanel extends JPanel {
 	private ClueGame game;
 	
 	public GameControlPanel(Board board, ClueGame clueGame) {
-		this.game = clueGame;
+		game = clueGame;
 		
 		GridBagLayout gridBag = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
@@ -69,10 +69,8 @@ public class GameControlPanel extends JPanel {
 
 		JPanel guessPanel = new JPanel(new GridLayout(1, 1));
 		guessPanel.setBorder(new TitledBorder(new EtchedBorder(), "Guess"));
-		
-		if (guessLabel.equals(null)) {
-			guessLabel = new JLabel("None yet");
-		}
+
+		guessLabel = new JLabel("None yet");
 		guessPanel.add(guessLabel);
 
 		c.weightx = 1;
@@ -95,16 +93,19 @@ public class GameControlPanel extends JPanel {
 
 	private JLabel whoseTurnLabel;
 	private JLabel dieRollLabel;
-	private JLabel guessLabel = null;
+	private JLabel guessLabel;
 	private JLabel responseLabel;
-	
-	public void setGuessLabel(JLabel guessLabel) {
-		this.guessLabel = guessLabel;
-	}
-
 
 	public void updateSuggestion(CardSet suggestion, Card result) {
 		guessLabel.setText(suggestion.toString());
 		responseLabel.setText(result.getName());
+	}
+	
+	public void updateDiceRoll(int dieRoll) {
+		dieRollLabel.setText(Integer.toString(dieRoll));
+	}
+
+	public void updateCurrentPlayer(Player currentPlayer) {
+		whoseTurnLabel.setText(currentPlayer.getName());
 	}
 }
