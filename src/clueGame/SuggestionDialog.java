@@ -1,7 +1,9 @@
 package clueGame;
 
 import java.awt.BorderLayout;
+import java.awt.Dialog;
 import java.awt.GridLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -15,11 +17,14 @@ public class SuggestionDialog extends JDialog {
 	private JComboBox personGuess, weaponGuess;
 	private JButton submitButton, cancelButton;
 	private List<Card> cardDeck;
+	private boolean submitted;
+	private String room;
 	
-	
-	public SuggestionDialog(String room, List<Card> cards) {
-		setModalityType(ModalityType.APPLICATION_MODAL);
+	public SuggestionDialog(Window parent, String room, List<Card> cards) {
+		super(parent, Dialog.DEFAULT_MODALITY_TYPE);
 		setLayout(new GridLayout(0,2));
+		
+		this.room = room;
 		
 		cardDeck = cards;
 		personGuess = loadComboBox(Card.CardType.PERSON);
@@ -35,27 +40,29 @@ public class SuggestionDialog extends JDialog {
 		submitButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO:
+				submitted = true;
+				setVisible(false);
 			}
 		});
 		cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO:
+				submitted = false;
+				setVisible(false);
 			}
 		});
 		
-		add(personLabel, BorderLayout.WEST);
-		add(personGuess, BorderLayout.CENTER);
-		add(weaponLabel, BorderLayout.WEST);
-		add(weaponGuess, BorderLayout.CENTER);
-		add(roomLabel, BorderLayout.WEST);
-		add(roomName, BorderLayout.CENTER);
-		add(submitButton, BorderLayout.CENTER);
-		add(cancelButton, BorderLayout.CENTER);
+		add(personLabel);
+		add(personGuess);
+		add(weaponLabel);
+		add(weaponGuess);
+		add(roomLabel);
+		add(roomName);
+		add(submitButton);
+		add(cancelButton);
 	}
 	
-	public JComboBox loadComboBox(Card.CardType type) {
+	private JComboBox loadComboBox(Card.CardType type) {
 		JComboBox guess = new JComboBox();
 		for(Card c : cardDeck) {
 			if (c.getType().equals(type)) {
@@ -63,5 +70,32 @@ public class SuggestionDialog extends JDialog {
 			}
 		}
 		return guess;
+	}
+	
+	public CardSet prompt() {
+		setVisible(true);
+		
+		if (submitted) {
+			Card person = null;
+			Card weapon = null;
+			Card room = null;
+			
+			for (Card card : cardDeck) {
+				if (card.getName().equals(personGuess.getSelectedItem().toString())) {
+					person = card;
+				}
+				else if (card.getName().equals(weaponGuess.getSelectedItem().toString())) {
+					weapon = card;
+				}
+				else if (card.getName().equals(this.room)) {
+					room = card;
+				}
+			}
+			
+			return new CardSet(person, weapon, room);
+		}
+		else {
+			return null;
+		}
 	}
 }
