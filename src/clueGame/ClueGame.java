@@ -101,7 +101,10 @@ public class ClueGame extends JFrame {
 		madeMove = false;
 		madeSuggestion = false;
 		
+		gameControl.updateCurrentPlayer(currentPlayer);
+		
 		dieRoll = rand.nextInt(6) + 1;
+		gameControl.updateDiceRoll(dieRoll);
 		
 		targets = board.getTargets(currentPlayer.getCellIndex(), dieRoll);
 		

@@ -100,4 +100,12 @@ public class GameControlPanel extends JPanel {
 		guessLabel.setText(suggestion.toString());
 		responseLabel.setText(result.getName());
 	}
+	
+	public void updateDiceRoll(int dieRoll) {
+		dieRollLabel.setText(Integer.toString(dieRoll));
+	}
+
+	public void updateCurrentPlayer(Player currentPlayer) {
+		whoseTurnLabel.setText(currentPlayer.getName());
+	}
 }
