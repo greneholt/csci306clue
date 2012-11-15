@@ -69,10 +69,8 @@ public class GameControlPanel extends JPanel {
 
 		JPanel guessPanel = new JPanel(new GridLayout(1, 1));
 		guessPanel.setBorder(new TitledBorder(new EtchedBorder(), "Guess"));
-		
-		if (guessLabel.equals(null)) {
-			guessLabel = new JLabel("None yet");
-		}
+
+		guessLabel = new JLabel("None yet");
 		guessPanel.add(guessLabel);
 
 		c.weightx = 1;
