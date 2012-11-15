@@ -17,7 +17,7 @@ public class GameControlPanel extends JPanel {
 	private ClueGame game;
 	
 	public GameControlPanel(Board board, ClueGame clueGame) {
-		this.game = clueGame;
+		game = clueGame;
 		
 		GridBagLayout gridBag = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
