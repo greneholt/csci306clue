@@ -114,7 +114,7 @@ public class ClueGame extends JFrame {
 			board.displayTargets(targets);
 			
 			if (currentCell.isRoom() && ((RoomCell)currentCell).getInitial() != currentPlayer.getLastRoomVisited()) {
-				playerMadeSuggestion();
+				playerMadeSuggestion(((RoomCell)currentCell).getInitial());
 			}
 		}
 		else {
@@ -137,9 +137,7 @@ public class ClueGame extends JFrame {
 				Card room = board.getCardForRoom(((RoomCell)target).getInitial());
 				
 				CardSet suggestion = computer.createSuggestion(room, board.getCards());
-				Card result = board.disproveSuggestion(currentPlayer, suggestion.getPerson(), suggestion.getWeapon(), suggestion.getRoom());
-				
-				gameControl.updateSuggestion(suggestion, result);
+				Card result = handleSuggestion(suggestion);
 				
 				if (result != null) {
 					computer.markSeen(result);
@@ -147,9 +145,18 @@ public class ClueGame extends JFrame {
 			}
 		}
 	}
+
+	private Card handleSuggestion(CardSet suggestion) {
+		Card result = board.disproveSuggestion(currentPlayer, suggestion.getPerson(), suggestion.getWeapon(), suggestion.getRoom());
+		gameControl.updateSuggestion(suggestion, result);
+		return result;
+	}
 	
-	public void playerMadeSuggestion() {
-		JOptionPane.showMessageDialog(this, "Make a suggestion", "Do it!", JOptionPane.INFORMATION_MESSAGE);
+	public void playerMadeSuggestion(char roomInitial) {
+		String roomName = board.getRooms().get(roomInitial);
+		SuggestionDialog dialog = new SuggestionDialog(this, roomName, board.getCards());
+		CardSet suggestion = dialog.prompt();
+		handleSuggestion(suggestion);
 	}
 	
 	private void buildMenu() {
@@ -208,7 +215,7 @@ public class ClueGame extends JFrame {
 		board.clearTargets();
 		board.repaint();
 		if (cell.isRoom()) {
-			playerMadeSuggestion();
+			playerMadeSuggestion(((RoomCell)cell).getInitial());
 		}
 	}
 }
