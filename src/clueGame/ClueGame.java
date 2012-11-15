@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.Random;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -18,7 +20,19 @@ public class ClueGame extends JFrame {
 	private DetectiveDialog detective;
 	private CardDisplayPanel cardDisplay;
 	private GameControlPanel gameControl;
+	private Player currentPlayer;
+	private int nextPlayerIndex;
+
+	private boolean madeMove;
+	private boolean madeSuggestion;
+	private int dieRoll;
 	
+	private static final Random rand = new Random();
+	
+	public Player getCurrentPlayer() {
+		return currentPlayer;
+	}
+
 	public ClueGame() {
 		super();
 		
@@ -53,11 +67,84 @@ public class ClueGame extends JFrame {
 	
 	public void startGame() {
 		Player human = board.getHuman();
+		nextPlayerIndex = 0;
 		JOptionPane.showMessageDialog(this, "You are " + human.getName() + ", press Next player to begin play", "Welcome to Clue", JOptionPane.INFORMATION_MESSAGE);
 	}
 	
 	public void nextPlayer() {
+		if (currentPlayer != null) {
+			BoardCell currentCell = board.getCellAt(currentPlayer.getCellIndex()); 
+			
+			if (currentPlayer == board.getHuman()) {
+				if (!madeMove && !madeSuggestion) {
+					JOptionPane.showMessageDialog(this, "You have not made a move or a suggestion yet", "Cannot continue", JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+			}
+			
+			if (currentCell.isRoom()) {
+				currentPlayer.setLastRoomVisited(((RoomCell) currentCell).getInitial());
+			}
+			else {
+				currentPlayer.setLastRoomVisited('W');
+			}
+		}
 		
+		currentPlayer = board.getPlayers().get(nextPlayerIndex);
+		nextPlayerIndex = (nextPlayerIndex + 1) % board.getPlayers().size();
+		startTurn();
+	}
+	
+	public void startTurn() {
+		madeMove = false;
+		madeSuggestion = false;
+		
+		dieRoll = rand.nextInt(6) + 1;
+		
+		Set<BoardCell> targets = board.getTargets(currentPlayer.getCellIndex(), dieRoll);
+		
+		BoardCell currentCell = board.getCellAt(currentPlayer.getCellIndex());
+		
+		if (currentPlayer == board.getHuman()) {
+			board.displayTargets(targets);
+			
+			if (currentCell.isRoom() && ((RoomCell)currentCell).getInitial() != currentPlayer.getLastRoomVisited()) {
+				playerMadeSuggestion();
+			}
+		}
+		else {
+			ComputerPlayer computer = (ComputerPlayer)currentPlayer;
+			
+			CardSet accusation = computer.maybeMakeAccusation(board.getCards());
+			
+			if (accusation != null) {
+				boolean correct = board.checkAccusation(accusation.getPerson(), accusation.getWeapon(), accusation.getRoom());
+				if (correct) {
+					JOptionPane.showMessageDialog(this, "The computer has won. It was " + accusation, "Computer Won", JOptionPane.INFORMATION_MESSAGE);
+					System.exit(0);
+				}
+			}
+			
+			BoardCell target = computer.pickLocation(targets);
+			computer.setCellIndex(target.getIndex());
+			board.repaint();
+			if (board.isRoom(target.getIndex())) {
+				Card room = board.getCardForRoom(((RoomCell)target).getInitial());
+				
+				CardSet suggestion = computer.createSuggestion(room, board.getCards());
+				Card result = board.disproveSuggestion(currentPlayer, suggestion.getPerson(), suggestion.getWeapon(), suggestion.getRoom());
+				
+				gameControl.updateSuggestion(suggestion, result);
+				
+				if (result != null) {
+					computer.markSeen(result);
+				}
+			}
+		}
+	}
+	
+	public void playerMadeSuggestion() {
+		// show the suggestion dialog
 	}
 	
 	private void buildMenu() {

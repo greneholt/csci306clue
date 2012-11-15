@@ -110,7 +110,7 @@ public class GameActionsTests {
 
 	@Test
 	public void testDisproveSuggestionOnePlayer() {
-		ComputerPlayer computer = new ComputerPlayer();
+		Player computer = new ComputerPlayer();
 		computer.giveCard(scarlet);
 		computer.giveCard(mustard);
 		computer.giveCard(ballroom);
@@ -150,14 +150,14 @@ public class GameActionsTests {
 
 	@Test
 	public void testDisproveSuggestionThreePlayers() {
-		ComputerPlayer jim = new ComputerPlayer();
+		Player jim = new ComputerPlayer();
 		jim.giveCard(conservatory);
-		ComputerPlayer bob = new ComputerPlayer();
+		Player bob = new ComputerPlayer();
 		bob.giveCard(mustard);
 		board.getPlayers().add(jim);
 		board.getPlayers().add(bob);
 		
-		ComputerPlayer tim = new ComputerPlayer();
+		Player tim = new ComputerPlayer();
 		tim.giveCard(confetti);
 		board.getPlayers().add(tim);
 		
@@ -196,7 +196,7 @@ public class GameActionsTests {
 
 	@Test
 	public void testDontDisproveMyself() {
-		ComputerPlayer jorge = new ComputerPlayer();
+		Player jorge = new ComputerPlayer();
 		jorge.giveCard(scarlet);
 		jorge.giveCard(ballroom);
 		board.getPlayers().clear();

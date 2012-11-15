@@ -15,6 +15,7 @@ public class Player {
 	private Color pieceColor;
 	private int cellIndex;
 	private Set<Card> cards = new HashSet<Card>();
+	protected char lastRoomVisited;
 
 	public Player() {
 		// TODO Auto-generated constructor stub
@@ -87,5 +88,13 @@ public class Player {
 		g2d.fill(circle);
 		g2d.setColor(new Color(0x000000));
 		g2d.draw(circle);
+	}
+
+	public char getLastRoomVisited() {
+		return lastRoomVisited;
+	}
+
+	public void setLastRoomVisited(char lastRoomVisited) {
+		this.lastRoomVisited = lastRoomVisited;
 	}
 }

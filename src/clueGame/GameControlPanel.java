@@ -95,4 +95,9 @@ public class GameControlPanel extends JPanel {
 	private JLabel dieRollLabel;
 	private JLabel guessLabel;
 	private JLabel responseLabel;
+
+	public void updateSuggestion(CardSet suggestion, Card result) {
+		guessLabel.setText(suggestion.toString());
+		responseLabel.setText(result.getName());
+	}
 }

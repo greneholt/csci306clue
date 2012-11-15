@@ -22,4 +22,9 @@ public class CardSet {
 		this.weapon = weapon;
 		this.room = room;
 	}
+	
+	@Override
+	public String toString() {
+		return person.getName() + " with the " + weapon.getName() + " in the " + room.getName();
+	}
 }

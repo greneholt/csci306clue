@@ -41,8 +41,8 @@ public class Board extends JComponent {
 
 	private CardSet solution;
 
-	private Set<BoardCell> targets = new HashSet<BoardCell>();
-
+	private Set<BoardCell> displayTargets;
+	
 	public int calcIndex(int row, int col) {
 		int index = (row * numColumns) + col;
 		return index;
@@ -67,14 +67,44 @@ public class Board extends JComponent {
 		List<Card> deck = new LinkedList<Card>(cards); // duplicate the cards list for dealing
 		Collections.shuffle(deck);
 
+		Card person = null;
+		Card weapon = null;
+		Card room = null;
+		
 		int i = 0;
 		while (deck.size() > 0) {
 			Card card = deck.remove(0); // the deck is shuffled, so just remove the first card
 
+			if (card.getType() == CardType.PERSON && person == null) {
+				person = card;
+				continue;
+			}
+			else if (card.getType() == CardType.WEAPON && weapon == null) {
+				weapon = card;
+				continue;
+			}
+			else if (card.getType() == CardType.ROOM && room == null) {
+				room = card;
+				continue;
+			}
+			
 			players.get(i).giveCard(card);
 
 			i = (i + 1) % players.size();
 		}
+		
+		solution = new CardSet(person, weapon, room);
+	}
+
+	public Card getCardForRoom(char initial) {
+		String name = rooms.get(initial);
+
+		for (Card card : cards) {
+			if (card.getType() == CardType.ROOM && card.getName().equals(name)) {
+				return card;
+			}
+		}
+		return null;
 	}
 
 	public Card disproveSuggestion(Player from, Card person, Card weapon, Card room) {
@@ -95,6 +125,11 @@ public class Board extends JComponent {
 		} else {
 			return null;
 		}
+	}
+
+	public void displayTargets(Set<BoardCell> targets) {
+		displayTargets = targets;
+		repaint();
 	}
 
 	public LinkedList<Integer> getAdjList(int i) {
@@ -216,12 +251,16 @@ public class Board extends JComponent {
 		return solution;
 	}
 
-	public Set<BoardCell> getTargets(int i, int steps) {
-		targets = new HashSet<BoardCell>();
+	public Set<BoardCell> getTargets(int cellIndex, int steps) {
+		Set<BoardCell> targets = new HashSet<BoardCell>();
 		path.clear();
-		path.add(i);
-		calcTargets(i, steps);
+		path.add(cellIndex);
+		calcTargets(targets, cellIndex, steps);
 		return targets;
+	}
+
+	public boolean isRoom(int cellIndex) {
+		return getCellAt(cellIndex).isRoom();
 	}
 
 	public void loadConfigFiles(String legendFile, String boardFile, String weaponsFile, String playersFile) throws BadConfigFormatException, IOException {
@@ -254,6 +293,12 @@ public class Board extends JComponent {
 			g2d.drawString(label.getValue(), x, y);
 		}
 
+		if (displayTargets != null) {
+			for (BoardCell target : displayTargets) {
+				target.drawAsTarget(g2d, cellWidth, cellHeight);
+			}
+		}
+
 		// Draw players
 		for (Player p : players) {
 			p.draw(g2d, cellWidth, cellHeight, numRows, numColumns);
@@ -268,7 +313,7 @@ public class Board extends JComponent {
 		this.solution = solution;
 	}
 
-	private void calcTargets(int calcIndex, int steps) {
+	private void calcTargets(Set<BoardCell> targets, int calcIndex, int steps) {
 		for (Integer neighbor : getAdjList(calcIndex)) {
 			if (path.contains(neighbor))
 				continue;
@@ -279,7 +324,7 @@ public class Board extends JComponent {
 			if (path.size() > steps || getCellAt(neighbor).isDoorway()) {
 				targets.add(getCellAt(neighbor));
 			} else {
-				calcTargets(neighbor, steps);
+				calcTargets(targets, neighbor, steps);
 			}
 			path.remove(neighbor);
 		}
@@ -405,7 +450,7 @@ public class Board extends JComponent {
 		loadPlayer(human, scan);
 		players.add(human);
 		while (scan.hasNextLine()) {
-			ComputerPlayer droid = new ComputerPlayer();
+			Player droid = new ComputerPlayer();
 			loadPlayer(droid, scan);
 			players.add(droid);
 		}

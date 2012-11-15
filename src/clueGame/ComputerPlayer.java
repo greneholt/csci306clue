@@ -7,7 +7,6 @@ import java.util.Random;
 import java.util.Set;
 
 public class ComputerPlayer extends Player {
-	private char lastRoomVisited;
 	private Set<Card> seenCards = new HashSet<Card>();
 
 	public ComputerPlayer() {
@@ -30,7 +29,8 @@ public class ComputerPlayer extends Player {
 	}
 
 	/**
-	 * Can return null if every card of a certain type has been seen
+	 * Can return null if every card of a certain type has been seen,
+	 * but so long as the solution cards weren't dealt to a player this shouldn't happen.
 	 */
 	public CardSet createSuggestion(Card room, List<Card> cards) {
 		List<Card> weapons = new LinkedList<Card>();
@@ -62,12 +62,34 @@ public class ComputerPlayer extends Player {
 	public void markSeen(Card seen) {
 		seenCards.add(seen);
 	}
-
-	public char getLastRoomVisited() {
-		return lastRoomVisited;
-	}
-
-	public void setLastRoomVisited(char lastRoomVisited) {
-		this.lastRoomVisited = lastRoomVisited;
+	
+	// if the computer wants to make an accusation, it will return a CardSet, otherwise it will return null
+	public CardSet maybeMakeAccusation(List<Card> cards) {
+		// if there are only three cards that we haven't seen and that aren't in our deck, they are the correct accusation
+		if (cards.size() - seenCards.size() - getCards().size() == 3) {
+			Card person = null;
+			Card weapon = null;
+			Card room = null;
+			
+			for (Card card : cards) {
+				if (!seenCards.contains(card) && !getCards().contains(card)) {
+					switch(card.getType()) {
+					case WEAPON:
+						weapon = card;
+						break;
+					case PERSON:
+						person = card;
+						break;
+					case ROOM:
+						room = card;
+						break;
+					}
+				}
+			}
+			
+			return new CardSet(person, weapon, room);
+		}
+		
+		return null;
 	}
 }
