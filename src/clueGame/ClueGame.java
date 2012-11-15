@@ -108,45 +108,48 @@ public class ClueGame extends JFrame {
 		
 		targets = board.getTargets(currentPlayer.getCellIndex(), dieRoll);
 		
-		BoardCell currentCell = board.getCellAt(currentPlayer.getCellIndex());
-		
 		if (currentPlayer == board.getHuman()) {
-			board.displayTargets(targets);
-			
-			if (currentCell.isRoom() && ((RoomCell)currentCell).getInitial() != currentPlayer.getLastRoomVisited()) {
-				playerMadeSuggestion(((RoomCell)currentCell).getInitial());
-				
-				if (madeSuggestion) {
-					board.clearTargets();
-				}
-			}
+			humanTurn();
 		}
 		else {
-			ComputerPlayer computer = (ComputerPlayer)currentPlayer;
+			computerTurn();
+		}
+	}
+
+	private void humanTurn() {
+		BoardCell currentCell = board.getCellAt(currentPlayer.getCellIndex());
+		board.displayTargets(targets);
+		
+		if (currentCell.isRoom() && ((RoomCell)currentCell).getInitial() != currentPlayer.getLastRoomVisited()) {
+			playerMadeSuggestion(((RoomCell)currentCell).getInitial());
 			
-			CardSet accusation = computer.maybeMakeAccusation(board.getCards());
-			
-			if (accusation != null) {
-				boolean correct = board.checkAccusation(accusation.getPerson(), accusation.getWeapon(), accusation.getRoom());
-				if (correct) {
-					JOptionPane.showMessageDialog(this, "The computer has won. It was " + accusation, "Computer Won", JOptionPane.INFORMATION_MESSAGE);
-					System.exit(0);
-				}
+			if (madeSuggestion) {
+				board.clearTargets();
 			}
-			
-			BoardCell target = computer.pickLocation(targets);
-			computer.setCellIndex(target.getIndex());
-			board.repaint();
-			if (board.isRoom(target.getIndex())) {
-				Card room = board.getCardForRoom(((RoomCell)target).getInitial());
-				
-				CardSet suggestion = computer.createSuggestion(room, board.getCards());
-				Card result = handleSuggestion(suggestion);
-				
-				if (result != null) {
-					computer.markSeen(result);
-				}
+		}
+	}
+
+	private void computerTurn() {
+		ComputerPlayer computer = (ComputerPlayer)currentPlayer;
+		
+		CardSet accusation = computer.maybeMakeAccusation(board.getCards());
+		
+		if (accusation != null) {
+			boolean correct = board.checkAccusation(accusation.getPerson(), accusation.getWeapon(), accusation.getRoom());
+			if (correct) {
+				JOptionPane.showMessageDialog(this, "The computer has won. It was " + accusation, "Computer Won", JOptionPane.INFORMATION_MESSAGE);
+				System.exit(0);
 			}
+		}
+		
+		BoardCell target = computer.pickLocation(targets);
+		computer.setCellIndex(target.getIndex());
+		board.repaint();
+		if (board.isRoom(target.getIndex())) {
+			Card room = board.getCardForRoom(((RoomCell)target).getInitial());
+			
+			CardSet suggestion = computer.createSuggestion(room, board.getCards());
+			handleSuggestion(suggestion);
 		}
 	}
 
@@ -165,6 +168,13 @@ public class ClueGame extends JFrame {
 		
 		Card result = board.disproveSuggestion(currentPlayer, suggestion.getPerson(), suggestion.getWeapon(), suggestion.getRoom());
 		gameControl.updateSuggestion(suggestion, result);
+		if (result != null) {
+			for (Player player : board.getPlayers()) {
+				if (player instanceof ComputerPlayer) {
+					((ComputerPlayer)player).markSeen(result);
+				}
+			}
+		}
 		return result;
 	}
 	

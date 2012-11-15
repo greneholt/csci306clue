@@ -98,7 +98,9 @@ public class GameControlPanel extends JPanel {
 
 	public void updateSuggestion(CardSet suggestion, Card result) {
 		guessLabel.setText(suggestion.toString());
-		responseLabel.setText(result.getName());
+		if (result != null) {
+			responseLabel.setText(result.getName());
+		}
 	}
 	
 	public void updateDiceRoll(int dieRoll) {
