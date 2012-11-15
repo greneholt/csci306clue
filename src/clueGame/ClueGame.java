@@ -26,7 +26,6 @@ public class ClueGame extends JFrame {
 	private boolean madeMove;
 	private boolean madeSuggestion;
 	private boolean madeAccusation;
-	private CardSet accusation;
 	private boolean correctAccusation;
 	private int dieRoll;
 	
@@ -103,6 +102,7 @@ public class ClueGame extends JFrame {
 	public void startTurn() {
 		madeMove = false;
 		madeSuggestion = false;
+		madeAccusation = false;
 		
 		gameControl.updateCurrentPlayer(currentPlayer);
 		
@@ -130,7 +130,6 @@ public class ClueGame extends JFrame {
 				board.clearTargets();
 			}
 		}
-		madeAccusation = false;
 	}
 
 	private void computerTurn() {
@@ -158,7 +157,7 @@ public class ClueGame extends JFrame {
 	}
 	
 	public void makeAccusation() {
-		if(currentPlayer.equals(board.getHuman())) {
+		if(currentPlayer == board.getHuman()) {
 			AccusationDialog dialog = new AccusationDialog(this, board.getCards());
 			CardSet accusation = dialog.prompt();
 			if (accusation == null) {
@@ -166,16 +165,12 @@ public class ClueGame extends JFrame {
 			}
 			correctAccusation = handleAccusation(accusation);
 			madeAccusation = true;
-			this.accusation = accusation;
 			
-			if (madeAccusation) {
-				if (correctAccusation) {
-					JOptionPane.showMessageDialog(this, "You have won. It was " + accusation, "Player Won", JOptionPane.INFORMATION_MESSAGE);
-					System.exit(0);
-				} else {
-					JOptionPane.showMessageDialog(this, accusation + ": This is incorrect.", "Incorrect", JOptionPane.INFORMATION_MESSAGE);
-				}
-				
+			if (correctAccusation) {
+				JOptionPane.showMessageDialog(this, "You have won. It was " + accusation, "Player Won", JOptionPane.INFORMATION_MESSAGE);
+				System.exit(0);
+			} else {
+				JOptionPane.showMessageDialog(this, accusation + ": This is incorrect.", "Incorrect", JOptionPane.INFORMATION_MESSAGE);
 			}
 			
 			board.clearTargets();
